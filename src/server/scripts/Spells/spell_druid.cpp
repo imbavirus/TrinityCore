@@ -336,7 +336,7 @@ public:
 							caster->CastSpell(caster, SPELL_DRUID_STAG_FORM);
 							if (caster->HasAura(114338))
 							{
-								/*TODO: Convert player to vehicle for stag form*/
+								caster->AddAura(115034, caster);
 							}
 						}
 					}
