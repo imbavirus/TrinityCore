@@ -170,7 +170,11 @@ public:
 				if (caster->HasAura(SPELL_DRUID_FORM_CONTROLLER))
 					caster->RemoveAura(SPELL_DRUID_FORM_CONTROLLER);
 				if (caster->HasAura(SPELL_DRUID_STAG_FORM))
+				{
 					caster->RemoveAura(SPELL_DRUID_STAG_FORM);
+					if (caster->HasAura(115034))
+						caster->RemoveAura(115034);
+				}
 				if (caster->HasAura(SPELL_DRUID_FLIGHT_FORM))
 					caster->RemoveAura(SPELL_DRUID_FLIGHT_FORM);
 				if (caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
@@ -378,26 +382,32 @@ public:
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
 				if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
-				{				
+				{
 					if (caster->isOutside())
 					{
-						if ((caster->GetSkillValue(SKILL_RIDING) >= 225 &&
+						if (caster->GetSkillValue(SKILL_RIDING) >= 225 &&
 							((caster->GetMapId() == 530) ||
-							(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
-							(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
-							(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646)))))
+								(caster->HasSpell(54197) && caster->GetMapId() == 571) ||
+								(caster->HasSpell(115913) && caster->GetMapId() == 870 && caster->GetZoneId() != 951 && caster->GetZoneId() != 929) ||
+								(caster->HasSpell(90267) && (caster->GetMapId() == 0 || caster->GetMapId() == 1 || caster->GetMapId() == 646))) && !caster->HasAura(114338))
+						{
+							if (caster->GetSkillValue(SKILL_RIDING) >= 300 && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
+								caster->CastSpell(caster, SPELL_DRUID_SWIFT_FLIGHT_FORM);
+							else if (!caster->HasAura(SPELL_DRUID_FLIGHT_FORM) && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
+								caster->CastSpell(caster, SPELL_DRUID_FLIGHT_FORM);
+						}
+						else if (!caster->HasAura(SPELL_DRUID_STAG_FORM) && !caster->HasAura(SPELL_DRUID_FLIGHT_FORM) && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM) && !caster->HasAura(165962))
+						{
+							caster->CastSpell(caster, SPELL_DRUID_STAG_FORM);
+							if (caster->HasAura(114338))
 							{
-								if (caster->GetSkillValue(SKILL_RIDING) >= 300 && !caster->HasAura(SPELL_DRUID_SWIFT_FLIGHT_FORM))
-									caster->AddAura(SPELL_DRUID_SWIFT_FLIGHT_FORM, caster);
-								else if (!caster->HasAura(SPELL_DRUID_FLIGHT_FORM))
-									caster->AddAura(SPELL_DRUID_FLIGHT_FORM, caster);
+								caster->AddAura(115034, caster);
 							}
-							else if (!caster->HasAura(SPELL_DRUID_STAG_FORM))
-								caster->AddAura(SPELL_DRUID_STAG_FORM, caster);
+						}
 					}
-					else
-						caster->DeMorph();
 				}
+				else
+					caster->DeMorph();
 			}
 		}
 
@@ -437,7 +447,13 @@ public:
 					if (caster->IsInWater() && caster->HasAura(SPELL_DRUID_TRAVEL_FORM) && !caster->HasAura(SPELL_DRUID_AQUATIC_FORM))
 						caster->AddAura(SPELL_DRUID_AQUATIC_FORM, caster);
 					else if (caster->isOutside() && !caster->HasAura(SPELL_DRUID_STAG_FORM))
+					{
 						caster->AddAura(SPELL_DRUID_STAG_FORM, caster);
+						if (caster->HasAura(114338))
+						{
+							caster->AddAura(115034, caster);
+						}
+					}
 					else
 						caster->DeMorph();
 				}
