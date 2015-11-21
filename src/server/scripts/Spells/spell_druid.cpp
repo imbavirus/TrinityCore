@@ -346,7 +346,7 @@ public:
 			{
 				if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
 				{
-					if (caster->IsInWater() && caster->HasAura(SPELL_DRUID_TRAVEL_FORM) && !caster->HasAura(SPELL_DRUID_AQUATIC_FORM))
+					if (caster->IsInWater())
 						caster->AddAura(SPELL_DRUID_AQUATIC_FORM, caster);
 					else if (caster->isOutside())
 					{
