@@ -32,6 +32,7 @@ public:
         static std::vector<ChatCommand> petCommandTable =
         {
             { "create",  rbac::RBAC_PERM_COMMAND_PET_CREATE,  false, &HandlePetCreateCommand,  "" },
+			{ "learn",   rbac::RBAC_PERM_COMMAND_PET_CAST,   false, &HandlePetCastCommand,   "" },
             { "learn",   rbac::RBAC_PERM_COMMAND_PET_LEARN,   false, &HandlePetLearnCommand,   "" },
             { "unlearn", rbac::RBAC_PERM_COMMAND_PET_UNLEARN, false, &HandlePetUnlearnCommand, "" },
         };
@@ -113,6 +114,42 @@ public:
 
         return true;
     }
+
+	static bool HandlePetCastCommand(ChatHandler* handler, char const* args)
+	{
+		if (!*args)
+			return false;
+
+		Player* player = handler->GetSession()->GetPlayer();
+		Pet* pet = player->GetPet();
+
+		if (!pet)
+		{
+			handler->PSendSysMessage("You have no pet");
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
+
+		uint32 spellId = handler->extractSpellIdFromLink((char*)args);
+
+		if (!spellId || !sSpellMgr->GetSpellInfo(spellId))
+			return false;
+
+		// Check if spell is valid
+		SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellId);
+		if (!spellInfo || !SpellMgr::IsSpellValid(spellInfo))
+		{
+			handler->PSendSysMessage(LANG_COMMAND_SPELL_BROKEN, spellId);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
+		Unit* target =	handler->getSelectedUnit();
+
+		pet->CastSpell(target, spellId, true);
+
+		handler->PSendSysMessage("Pet has casted spell %u", spellId);
+		return true;
+	}
 
     static bool HandlePetLearnCommand(ChatHandler* handler, char const* args)
     {

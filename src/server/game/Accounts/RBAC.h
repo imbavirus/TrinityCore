@@ -102,7 +102,7 @@ enum RBACPermissions
     RBAC_PERM_MAY_CHECK_OWN_EMAIL                            = 50,
     RBAC_PERM_ALLOW_TWO_SIDE_TRADE                           = 51,
 	RBAC_PERM_COMMAND_MODIFY_POWER_GET						 = 52,
-    
+	RBAC_PERM_COMMAND_PET_CAST								 = 53,
     // Free space for core permissions (till 149)
     // Roles (Permissions with delegated permissions) use 199 and descending
     RBAC_PERM_COMMAND_RBAC                                   = 200,
