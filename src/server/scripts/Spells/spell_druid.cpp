@@ -282,6 +282,10 @@ public:
 
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
+				if (caster->HasAura(SPELL_DRUID_BEAR_FORM))
+					caster->RemoveAura(SPELL_DRUID_BEAR_FORM);
+				if (caster->HasAura(SPELL_DRUID_CAT_FORM))
+					caster->RemoveAura(SPELL_DRUID_CAT_FORM);
 				if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
 				{
 					caster->RemoveAura(SPELL_DRUID_TRAVEL_FORM);
