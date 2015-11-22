@@ -29,11 +29,17 @@ namespace Connection_Patcher
         {
 			static const std::vector<unsigned char> Portal()  { return{ '.', 'l', 'o', 'g', 'o', 'n', '.', 'b', 'a', 't', 't', 'l', 'e', '.', 'n', 'e', 't', 0x00 }; }
 			static const std::vector<unsigned char> Config()  { return{ 'C', 'o', 'n', 'f', 'i', 'g', '.', 'w', 't', 'f', 0x00 }; }
-			static const std::vector<unsigned char> Tag()  { return{ '-', 'N', 'o', 'v', ' ', '1', '1', ' ', '2', '0', '1', '5', 0x00 }; }
+			//static const std::vector<unsigned char> Tag()  { return{ 0x80, 0x9E, 0xE0, 0x00 }; }
+			static const std::vector<unsigned char> Tag() { return{ 'N', 'o', 'v', ' ', '1', '1', ' ', '2', '0', '1', '5', 0x00 }; }
 			static const std::vector<unsigned char> Modulus() { return{ 0x91, 0xD5, 0x9B, 0xB7, 0xD4, 0xE1, 0x83, 0xA5 }; }
-            static const std::vector<unsigned char> BinaryVersion() { return{ 0x3C, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3E }; }
-            static const std::vector<unsigned char> VersionsFile() { return { '%', 's', '.', 'p', 'a', 't', 'c', 'h', '.', 'b', 'a', 't', 't', 'l', 'e', '.', 'n', 'e', 't', ':', '1', '1', '1', '9', '/', '%', 's', '/', 'v', 'e', 'r', 's', 'i', 'o', 'n', 's' }; }
-        };
+			static const std::vector<unsigned char> BinaryVersion() { return{ 0x3C, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3E }; }
+			static const std::vector<unsigned char> OpenSpace() { return{ 0x00, 0x40, 0x00, 0x00, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; }
+			static const std::vector<unsigned char> VersionsFile() { return { '%', 's', '.', 'p', 'a', 't', 'c', 'h', '.', 'b', 'a', 't', 't', 'l', 'e', '.', 'n', 'e', 't', ':', '1', '1', '1', '9', '/', '%', 's', '/', 'v', 'e', 'r', 's', 'i', 'o', 'n', 's' }; }
+        
+		};
     }
 }
 

@@ -102,6 +102,10 @@ namespace Connection_Patcher
             // '.logon.battle.net' -> '.infernos-wow.com' to allow for set portal 'host'
             patcher->Patch(Patches::Common::Portal(), Patterns::Common::Portal());
 
+			std::cout << "patching Infernos\n";
+			// Add in needed infernos values
+			//patcher->Patch(Patches::Common::OpenSpace(), Patterns::Common::OpenSpace());
+			
 			std::cout << "patching Config File\n";
 			// 'Config.wtf' -> 'Infernos' to change name of config file
 			patcher->Patch(Patches::Common::Config(), Patterns::Common::Config());
