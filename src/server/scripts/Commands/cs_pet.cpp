@@ -116,7 +116,7 @@ public:
         return true;
     }
 
-	static bool HandlePetCastCommand(ChatHandler* handler, char const* /*args*/)
+	static bool HandlePetAttackCommand(ChatHandler* handler, char const* /*args*/)
 	{
 		Player* player = handler->GetSession()->GetPlayer();
 		Pet* pet = player->GetPet();
