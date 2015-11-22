@@ -409,6 +409,8 @@ public:
 			Unit* caster = GetCaster();
 			if (caster->HasAura(165961))
 				caster->RemoveAura(165961);
+			if (caster->HasAura(115034))
+				caster->RemoveAura(115034);
 		}
 
 		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
