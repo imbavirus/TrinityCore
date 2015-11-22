@@ -15,9 +15,9 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BattlePetPackets.h"
+#include "PetPackets.h"
 #include "World.h"
-
+/*
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::BattlePetSlot const& slot)
 {
     data << (slot.Pet.Guid.IsEmpty() ? ObjectGuid::Create<HighGuid::BattlePet>(0) : slot.Pet.Guid);
@@ -131,12 +131,12 @@ void WorldPackets::BattlePet::BattlePetModifyName::Read()
             Declined.name[i] = _worldPacket.ReadString(declinedNameLengths[i]);
     }
 }
-
-void WorldPackets::BattlePet::BattlePetDeletePet::Read()
+*/
+void WorldPackets::Pet::PetAbandon::Read()
 {
     _worldPacket >> PetGuid;
 }
-
+/*
 void WorldPackets::BattlePet::BattlePetSetFlags::Read()
 {
     _worldPacket >> PetGuid;
@@ -169,3 +169,4 @@ void WorldPackets::BattlePet::BattlePetSummon::Read()
 {
     _worldPacket >> PetGuid;
 }
+*/

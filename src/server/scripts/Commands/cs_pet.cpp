@@ -129,7 +129,8 @@ public:
 		}
 		Unit* target = handler->getSelectedUnit();
 
-		pet->Attack(target, true);
+		if (pet->IsValidAttackTarget(target))
+			pet->Attack(target, true);
 
 		handler->PSendSysMessage("Pet has attacked your target.");
 		return true;

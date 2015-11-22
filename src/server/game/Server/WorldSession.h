@@ -32,6 +32,7 @@
 #include "Cryptography/BigNumber.h"
 #include "AccountMgr.h"
 #include <unordered_set>
+#include "PetPackets.h"
 
 class BattlePetMgr;
 class Channel;
@@ -491,6 +492,10 @@ namespace WorldPackets
         class TurnInPetition;
     }
 
+	namespace pet
+	{
+		class PetAbandon;
+	}
     namespace Query
     {
         class QueryCreature;
@@ -1449,6 +1454,7 @@ class WorldSession
         void HandlePetSetAction(WorldPacket& recvData);
         void HandlePetAbandon(WorldPacket& recvData);
         void HandlePetRename(WorldPacket& recvData);
+		void HandlePetAbandon(WorldPackets::Pet::PetAbandon & PetDeletePet);
         void HandlePetCancelAuraOpcode(WorldPacket& recvPacket);
         void HandlePetSpellAutocastOpcode(WorldPacket& recvPacket);
         void HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& petCastSpell);
