@@ -168,22 +168,11 @@ public:
 
 		void ApplyEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
-			Unit* caster = GetCaster();
-			if (caster->HasAura(165962) && !caster->IsFlying())
-			{
-				caster->RemoveAura(165962);
-			}
-			if (caster->HasAura(115034))
-				caster->RemoveAura(115034);
-		}
-
-		void AfterApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
-		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
 				if (!caster->HasAura(SPELL_DRUID_FORM_CONTROLLER))
 					caster->AddAura(SPELL_DRUID_FORM_CONTROLLER, caster);
-			}
+			}			
 		}
 
 		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
@@ -210,7 +199,6 @@ public:
 
 		void Register() override
 		{
-			AfterEffectApply += AuraEffectApplyFn(spell_dru_travel_form_AuraScript::AfterApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_travel_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 			OnEffectApply += AuraEffectApplyFn(spell_dru_travel_form_AuraScript::ApplyEffect, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
 		}
@@ -354,6 +342,12 @@ public:
 			{
 				if (caster->HasAura(SPELL_DRUID_TRAVEL_FORM))
 				{
+					if (caster->HasAura(165962) && !caster->IsFlying())
+					{
+						caster->RemoveAura(165962);
+					}
+					if (caster->HasAura(115034))
+						caster->RemoveAura(115034);
 					if (caster->IsInWater())
 						caster->AddAura(SPELL_DRUID_AQUATIC_FORM, caster);
 					else if (caster->isOutside())
