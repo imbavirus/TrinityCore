@@ -91,6 +91,8 @@ public:
 				if (caster->HasAura(115034))
 					caster->RemoveAura(115034);
 			}
+			if (caster->HasAura(165962))
+				caster->RemoveAura(165962);
 			caster->SetSpeed(MOVE_RUN, playerBaseMoveRate[MOVE_RUN] *1.3, false);
 		}
 
@@ -132,6 +134,8 @@ public:
 				if (caster->HasAura(115034))
 					caster->RemoveAura(115034);
 			}
+			if (caster->HasAura(165962))
+				caster->RemoveAura(165962);
 		}
 
 		void Register() override
