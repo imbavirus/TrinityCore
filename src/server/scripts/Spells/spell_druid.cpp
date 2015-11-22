@@ -404,6 +404,13 @@ public:
 			return GetCaster()->GetTypeId() == TYPEID_PLAYER;
 		}
 
+		void ApplyEffect(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+		{
+			Unit* caster = GetCaster();
+			if (caster->HasAura(165961))
+				caster->RemoveAura(165961);
+		}
+
 		void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
@@ -440,6 +447,7 @@ public:
 
 		void Register() override
 		{
+			OnEffectApply += AuraEffectApplyFn(spell_dru_aqua_form_AuraScript::ApplyEffect, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
 			AfterEffectRemove += AuraEffectRemoveFn(spell_dru_aqua_form_AuraScript::AfterRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
 		}
 	};
