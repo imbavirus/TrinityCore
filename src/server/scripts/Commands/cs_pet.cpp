@@ -32,7 +32,8 @@ public:
         static std::vector<ChatCommand> petCommandTable =
         {
             { "create",  rbac::RBAC_PERM_COMMAND_PET_CREATE,  false, &HandlePetCreateCommand,  "" },
-			{ "learn",   rbac::RBAC_PERM_COMMAND_PET_CAST,   false, &HandlePetCastCommand,   "" },
+			{ "attack",	 rbac::RBAC_PERM_COMMAND_PET_ATTACK,  false, &HandlePetAttackCommand,  "" },
+			{ "cast",	 rbac::RBAC_PERM_COMMAND_PET_CAST,    false, &HandlePetCastCommand,    "" },
             { "learn",   rbac::RBAC_PERM_COMMAND_PET_LEARN,   false, &HandlePetLearnCommand,   "" },
             { "unlearn", rbac::RBAC_PERM_COMMAND_PET_UNLEARN, false, &HandlePetUnlearnCommand, "" },
         };
@@ -114,6 +115,25 @@ public:
 
         return true;
     }
+
+	static bool HandlePetCastCommand(ChatHandler* handler, char const* /*args*/)
+	{
+		Player* player = handler->GetSession()->GetPlayer();
+		Pet* pet = player->GetPet();
+
+		if (!pet)
+		{
+			handler->PSendSysMessage("You have no pet");
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
+		Unit* target = handler->getSelectedUnit();
+
+		pet->Attack(target, true);
+
+		handler->PSendSysMessage("Pet has attacked your target.");
+		return true;
+	}
 
 	static bool HandlePetCastCommand(ChatHandler* handler, char const* args)
 	{
