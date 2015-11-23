@@ -14,14 +14,12 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "PetPackets.h"
 #include "World.h"
-/*
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::BattlePetSlot const& slot)
+
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Petpac::PetSlot const& slot)
 {
-    data << (slot.Pet.Guid.IsEmpty() ? ObjectGuid::Create<HighGuid::BattlePet>(0) : slot.Pet.Guid);
-    data << uint32(slot.CollarID);
     data << uint8(slot.Index);
     data.WriteBit(slot.Locked);
     data.FlushBits();
@@ -29,13 +27,11 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::BattlePetSlot 
     return data;
 }
 
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::BattlePet const& pet)
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Petpac::Pet const& pet)
 {
     data << pet.Guid;
     data << uint32(pet.Species);
     data << uint32(pet.CreatureID);
-    data << uint32(pet.CollarID);
-    data << uint16(pet.Breed);
     data << uint16(pet.Level);
     data << uint16(pet.Exp);
     data << uint16(pet.Flags);
@@ -59,8 +55,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::BattlePet cons
     data.WriteString(pet.Name);
 
     return data;
-}
-
+}*/
+/*
 WorldPacket const* WorldPackets::BattlePet::BattlePetJournal::Write()
 {
     _worldPacket << uint16(Trap);
@@ -131,12 +127,10 @@ void WorldPackets::BattlePet::BattlePetModifyName::Read()
             Declined.name[i] = _worldPacket.ReadString(declinedNameLengths[i]);
     }
 }
-*/
-void WorldPackets::Pet::PetAbandon::Read()
+void WorldPackets::Petpac::PetAbandon::Read()
 {
     _worldPacket >> PetGuid;
 }
-/*
 void WorldPackets::BattlePet::BattlePetSetFlags::Read()
 {
     _worldPacket >> PetGuid;

@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+ 
 
 #ifndef PetPackets_h__
 #define PetPackets_h__
@@ -24,8 +24,9 @@
 
 namespace WorldPackets
 {
-    namespace Pet
+    namespace Petpac
     {
+		
         struct Pet
         {
             ObjectGuid Guid;
@@ -42,7 +43,6 @@ namespace WorldPackets
             ObjectGuid Owner;
             std::string Name;
         };
-
 		class PetAbandon final : public ClientPacket
 		{
 		public:
@@ -52,14 +52,13 @@ namespace WorldPackets
 
 			ObjectGuid PetGuid;
 		};
-		/*
+		
         struct PetSlot
         {
             Pet pet;
             uint8 Index = 0;
             bool Locked = true;
         };
-		
         class PetModifyName final : public ClientPacket
         {
         public:
@@ -80,8 +79,9 @@ namespace WorldPackets
             void Read() override;
 
             ObjectGuid PetGuid;
-        };*/
+        };
     }
 }
 
 #endif // PetPackets_h__
+*/

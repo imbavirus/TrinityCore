@@ -667,9 +667,10 @@ void WorldSession::HandlePetRename(WorldPacket& recvData)
     pet->SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, uint32(time(NULL))); // cast can't be helped
 }
 
-void WorldSession::HandlePetAbandon(WorldPackets::Pet::PetAbandon& PetDeletePet)
+void WorldSession::HandlePetAbandon(WorldPacket& recvData)
 {
-    ObjectGuid petguid = PetDeletePet.PetGuid;                                 //pet guid
+    ObjectGuid petguid;                                 //pet guid
+	recvData >> petguid;
     TC_LOG_DEBUG("network", "WORLD: Received CMSG_PET_ABANDON %s", petguid.ToString().c_str());
 
     if (!_player->IsInWorld())
