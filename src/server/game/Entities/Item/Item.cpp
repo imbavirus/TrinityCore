@@ -1345,8 +1345,8 @@ bool Item::CanBeTransmogrified(WorldPackets::Item::ItemInstance const& transmogr
     if (proto->GetClass() == ITEM_CLASS_WEAPON && proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_FISHING_POLE)
         return false;
 
-    if (proto->GetFlags2() & ITEM_FLAG2_CANNOT_BE_TRANSMOG)
-        return false;
+    //if (proto->GetFlags2() & ITEM_FLAG2_CANNOT_BE_TRANSMOG)
+    //    return false;
 
     //if (!HasStats(transmogrifier, bonus))
       //  return false;
@@ -1360,8 +1360,8 @@ bool Item::CanTransmogrify() const
     if (!proto)
         return false;
 
-    if (proto->GetFlags2() & ITEM_FLAG2_CANNOT_TRANSMOG)
-        return false;
+    //if (proto->GetFlags2() & ITEM_FLAG2_CANNOT_TRANSMOG)
+     //   return false;
 
     //if (proto->GetQuality() == ITEM_QUALITY_LEGENDARY)
       //  return false;
@@ -1373,8 +1373,8 @@ bool Item::CanTransmogrify() const
     if (proto->GetClass() == ITEM_CLASS_WEAPON && proto->GetSubClass() == ITEM_SUBCLASS_WEAPON_FISHING_POLE)
         return false;
 
-    if (proto->GetFlags2() & ITEM_FLAG2_CAN_TRANSMOG)
-        return true;
+    //if (proto->GetFlags2() & ITEM_FLAG2_CAN_TRANSMOG)
+     //   return true;
 
     //if (!HasStats())
       //  return false;
