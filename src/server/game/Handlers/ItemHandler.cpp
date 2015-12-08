@@ -1196,7 +1196,11 @@ void WorldSession::HandleTransmogrifyItems(WorldPackets::Item::TransmogrifyItems
 
         // add cost
         cost += itemTransmogrified->GetSpecialPrice();
+		if (itemTransmogrified->GetQuality() == ITEM_QUALITY_LEGENDARY)
+			cost *= 15000;
     }
+
+	
 
     if (cost) // 0 cost if reverting look
     {

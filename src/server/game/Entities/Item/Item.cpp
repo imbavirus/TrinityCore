@@ -1335,8 +1335,8 @@ bool Item::CanBeTransmogrified(WorldPackets::Item::ItemInstance const& transmogr
     if (!proto)
         return false;
 
-    if (proto->GetQuality() == ITEM_QUALITY_LEGENDARY)
-        return false;
+    //if (proto->GetQuality() == ITEM_QUALITY_LEGENDARY)
+      //  return false;
 
     if (proto->GetClass() != ITEM_CLASS_ARMOR &&
         proto->GetClass() != ITEM_CLASS_WEAPON)
@@ -1348,8 +1348,8 @@ bool Item::CanBeTransmogrified(WorldPackets::Item::ItemInstance const& transmogr
     if (proto->GetFlags2() & ITEM_FLAG2_CANNOT_BE_TRANSMOG)
         return false;
 
-    if (!HasStats(transmogrifier, bonus))
-        return false;
+    //if (!HasStats(transmogrifier, bonus))
+      //  return false;
 
     return true;
 }
@@ -1363,8 +1363,8 @@ bool Item::CanTransmogrify() const
     if (proto->GetFlags2() & ITEM_FLAG2_CANNOT_TRANSMOG)
         return false;
 
-    if (proto->GetQuality() == ITEM_QUALITY_LEGENDARY)
-        return false;
+    //if (proto->GetQuality() == ITEM_QUALITY_LEGENDARY)
+      //  return false;
 
     if (proto->GetClass() != ITEM_CLASS_ARMOR &&
         proto->GetClass() != ITEM_CLASS_WEAPON)
@@ -1376,8 +1376,8 @@ bool Item::CanTransmogrify() const
     if (proto->GetFlags2() & ITEM_FLAG2_CAN_TRANSMOG)
         return true;
 
-    if (!HasStats())
-        return false;
+    //if (!HasStats())
+      //  return false;
 
     return true;
 }
