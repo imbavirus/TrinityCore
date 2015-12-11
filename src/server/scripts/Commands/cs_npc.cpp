@@ -198,8 +198,10 @@ public:
             { "entry",      rbac::RBAC_PERM_COMMAND_NPC_SET_ENTRY,     false, &HandleNpcSetEntryCommand,         "" },
             { "factionid",  rbac::RBAC_PERM_COMMAND_NPC_SET_FACTIONID, false, &HandleNpcSetFactionIdCommand,     "" },
             { "flag",       rbac::RBAC_PERM_COMMAND_NPC_SET_FLAG,      false, &HandleNpcSetFlagCommand,          "" },
-            { "level",      rbac::RBAC_PERM_COMMAND_NPC_SET_LEVEL,     false, &HandleNpcSetLevelCommand,         "" },
-            { "link",       rbac::RBAC_PERM_COMMAND_NPC_SET_LINK,      false, &HandleNpcSetLinkCommand,          "" },
+			{ "level",      rbac::RBAC_PERM_COMMAND_NPC_SET_LEVEL,     false, &HandleNpcSetLevelCommand,         "" },
+			{ "minlevel",   rbac::RBAC_PERM_COMMAND_NPC_SET_MINLEVEL,  false, &HandleNpcSetMinLevelCommand,         "" },
+			{ "maxlevel",   rbac::RBAC_PERM_COMMAND_NPC_SET_MAXLEVEL,  false, &HandleNpcSetMaxLevelCommand,         "" },
+			{ "link",       rbac::RBAC_PERM_COMMAND_NPC_SET_LINK,      false, &HandleNpcSetLinkCommand,          "" },
             { "model",      rbac::RBAC_PERM_COMMAND_NPC_SET_MODEL,     false, &HandleNpcSetModelCommand,         "" },
             { "movetype",   rbac::RBAC_PERM_COMMAND_NPC_SET_MOVETYPE,  false, &HandleNpcSetMoveTypeCommand,      "" },
             { "phase",      rbac::RBAC_PERM_COMMAND_NPC_SET_PHASE,     false, &HandleNpcSetPhaseCommand,         "" },
@@ -431,48 +433,140 @@ public:
             handler->SendSysMessage(LANG_ERROR);
         return true;
     }
+	    
+	//change level of creature or pet
+	static bool HandleNpcSetLevelCommand(ChatHandler* handler, char const* args)
+	{
+		if (!*args)
+			return false;
 
-    //change level of creature or pet
-    static bool HandleNpcSetLevelCommand(ChatHandler* handler, char const* args)
-    {
-        if (!*args)
-            return false;
+		uint8 lvl = (uint8)atoi((char*)args);
+		if (lvl < 1 || lvl > sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL) + 3)
+		{
+			handler->SendSysMessage(LANG_BAD_VALUE);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
 
-        uint8 lvl = (uint8) atoi((char*)args);
-        if (lvl < 1 || lvl > sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL) + 3)
-        {
-            handler->SendSysMessage(LANG_BAD_VALUE);
-            handler->SetSentErrorMessage(true);
-            return false;
-        }
+		Creature* creature = handler->getSelectedCreature();
+		if (!creature)
+		{
+			handler->SendSysMessage(LANG_SELECT_CREATURE);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
 
-        Creature* creature = handler->getSelectedCreature();
-        if (!creature)
-        {
-            handler->SendSysMessage(LANG_SELECT_CREATURE);
-            handler->SetSentErrorMessage(true);
-            return false;
-        }
+		if (creature->IsPet())
+		{
+			if (((Pet*)creature)->getPetType() == HUNTER_PET)
+			{
+				creature->SetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP, sObjectMgr->GetXPForLevel(lvl) / 4);
+				creature->SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, 0);
+			}
+			((Pet*)creature)->GivePetLevel(lvl);
+		}
+		else
+		{
+			creature->SetMaxHealth(100 + 30 * lvl);
+			creature->SetHealth(100 + 30 * lvl);
+			creature->SetLevel(lvl);
+			creature->SaveToDB();
+		}
 
-        if (creature->IsPet())
-        {
-            if (((Pet*)creature)->getPetType() == HUNTER_PET)
-            {
-                creature->SetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP, sObjectMgr->GetXPForLevel(lvl)/4);
-                creature->SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, 0);
-            }
-            ((Pet*)creature)->GivePetLevel(lvl);
-        }
-        else
-        {
-            creature->SetMaxHealth(100 + 30*lvl);
-            creature->SetHealth(100 + 30*lvl);
-            creature->SetLevel(lvl);
-            creature->SaveToDB();
-        }
+		return true;
+	}
 
-        return true;
-    }
+	//change minlevel of creature
+	static bool HandleNpcSetMinLevelCommand(ChatHandler* handler, char const* args)
+	{
+		if (!*args)
+			return false;
+
+		uint8 lvl = (uint8)atoi((char*)args);
+		if (lvl < 1 || lvl > sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL) + 3)
+		{
+			handler->SendSysMessage(LANG_BAD_VALUE);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
+
+		Creature* creature = handler->getSelectedCreature();
+		if (!creature)
+		{
+			handler->SendSysMessage(LANG_SELECT_CREATURE);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
+
+		if (creature->IsPet())
+		{
+			return false;
+		}
+		else
+		{
+			// MinLevel is set in creature_template - not inside creature
+
+			// Update in memory..
+			if (CreatureTemplate const* cinfo = creature->GetCreatureTemplate())
+				const_cast<CreatureTemplate*>(cinfo)->minlevel = lvl;
+
+			// ..and DB
+			PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_UPD_CREATURE_MINLEVEL);
+
+			stmt->setUInt16(0, uint16(lvl));
+			stmt->setUInt32(1, creature->GetEntry());
+
+			WorldDatabase.Execute(stmt);
+		}
+
+		return true;
+	}
+
+	//change maxlevel of creature
+	static bool HandleNpcSetMaxLevelCommand(ChatHandler* handler, char const* args)
+	{
+		if (!*args)
+			return false;
+
+		uint8 lvl = (uint8)atoi((char*)args);
+		if (lvl < 1 || lvl > sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL) + 3)
+		{
+			handler->SendSysMessage(LANG_BAD_VALUE);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
+
+		Creature* creature = handler->getSelectedCreature();
+		if (!creature)
+		{
+			handler->SendSysMessage(LANG_SELECT_CREATURE);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
+
+		if (creature->IsPet())
+		{
+			return false;
+		}
+		else
+		{
+			// MaxLevel is set in creature_template - not inside creature
+
+			// Update in memory..
+			if (CreatureTemplate const* cinfo = creature->GetCreatureTemplate())
+				const_cast<CreatureTemplate*>(cinfo)->maxlevel = lvl;
+
+			// ..and DB
+			PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_UPD_CREATURE_MAXLEVEL);
+
+			stmt->setUInt16(0, uint16(lvl));
+			stmt->setUInt32(1, creature->GetEntry());
+
+			WorldDatabase.Execute(stmt);
+		}
+
+		return true;
+	}
 
     static bool HandleNpcDeleteCommand(ChatHandler* handler, char const* args)
     {
@@ -696,6 +790,8 @@ public:
         uint32 displayid = target->GetDisplayId();
         uint32 nativeid = target->GetNativeDisplayId();
         uint32 Entry = target->GetEntry();
+		uint32 MinLevel = target->GetCreatureTemplate()->minlevel;
+		uint32 MaxLevel = target->GetCreatureTemplate()->maxlevel;
 
         int64 curRespawnDelay = target->GetRespawnTimeEx()-time(NULL);
         if (curRespawnDelay < 0)
@@ -704,7 +800,7 @@ public:
         std::string defRespawnDelayStr = secsToTimeString(target->GetRespawnDelay(), true);
 
         handler->PSendSysMessage(LANG_NPCINFO_CHAR,  target->GetSpawnId(), target->GetGUID().ToString().c_str(), faction, npcflags, Entry, displayid, nativeid);
-        handler->PSendSysMessage(LANG_NPCINFO_LEVEL, target->getLevel());
+        handler->PSendSysMessage(LANG_NPCINFO_LEVEL, target->getLevel(), MinLevel, MaxLevel);
         handler->PSendSysMessage(LANG_NPCINFO_EQUIPMENT, target->GetCurrentEquipmentId(), target->GetOriginalEquipmentId());
         handler->PSendSysMessage(LANG_NPCINFO_HEALTH, target->GetCreateHealth(), target->GetMaxHealth(), target->GetHealth());
         handler->PSendSysMessage(LANG_NPCINFO_INHABIT_TYPE, cInfo->InhabitType);
