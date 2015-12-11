@@ -471,6 +471,7 @@ public:
 			creature->SetHealth(100 + 30 * lvl);
 			creature->SetLevel(lvl);
 			creature->SaveToDB();
+			handler->PSendSysMessage("Creature's Current Level Set To: %u", lvl);
 		}
 
 		return true;
@@ -500,6 +501,12 @@ public:
 
 		if (creature->IsPet())
 		{
+			handler->SendSysMessage("Cannot Set Min Level of a Pet.");
+			return false;
+		}
+		else if (lvl > creature->GetCreatureTemplate()->maxlevel)
+		{
+			handler->SendSysMessage("Supplied Min Level is larger than the current Max Level.");
 			return false;
 		}
 		else
@@ -517,6 +524,7 @@ public:
 			stmt->setUInt32(1, creature->GetEntry());
 
 			WorldDatabase.Execute(stmt);
+			handler->PSendSysMessage("Min Level Set To: %u", lvl);
 		}
 
 		return true;
@@ -546,6 +554,12 @@ public:
 
 		if (creature->IsPet())
 		{
+			handler->SendSysMessage("Cannot Set Max Level of a Pet.");
+			return false;
+		}
+		else if (lvl < creature->GetCreatureTemplate()->minlevel)
+		{
+			handler->SendSysMessage("Supplied Max Level is lower than the current Min Level.");
 			return false;
 		}
 		else
@@ -563,6 +577,7 @@ public:
 			stmt->setUInt32(1, creature->GetEntry());
 
 			WorldDatabase.Execute(stmt);
+			handler->PSendSysMessage("Max Level Set To: %u",lvl);
 		}
 
 		return true;
