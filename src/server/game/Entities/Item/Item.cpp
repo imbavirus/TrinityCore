@@ -1329,7 +1329,7 @@ bool Item::CheckSoulboundTradeExpire()
     return false;
 }
 
-bool Item::CanBeTransmogrified(WorldPackets::Item::ItemInstance const& transmogrifier, BonusData const* bonus)
+bool Item::CanBeTransmogrified(WorldPackets::Item::ItemInstance const& transmogrifier, BonusData const* /*bonus*/)
 {
     ItemTemplate const* proto = sObjectMgr->GetItemTemplate(transmogrifier.ItemID);
     if (!proto)
