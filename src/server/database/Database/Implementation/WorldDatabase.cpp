@@ -39,6 +39,7 @@ void WorldDatabaseConnection::DoPrepareStatements()
     PrepareStatement(WORLD_SEL_NPC_VENDOR_REF, "SELECT item, maxcount, incrtime, ExtendedCost, type FROM npc_vendor WHERE entry = ? AND type = ? ORDER BY slot ASC", CONNECTION_SYNCH);
     PrepareStatement(WORLD_UPD_CREATURE_MOVEMENT_TYPE, "UPDATE creature SET MovementType = ? WHERE guid = ?", CONNECTION_ASYNC);
     PrepareStatement(WORLD_UPD_CREATURE_FACTION, "UPDATE creature_template SET faction = ? WHERE entry = ?", CONNECTION_ASYNC);
+	PrepareStatement(WORLD_UPD_CREATURE_HEALTH, "UPDATE creature_template SET HealthModifier = ? WHERE entry = ?", CONNECTION_ASYNC);
 	PrepareStatement(WORLD_UPD_CREATURE_MINLEVEL, "UPDATE creature_template SET minlevel = ? WHERE entry = ?", CONNECTION_ASYNC);
 	PrepareStatement(WORLD_UPD_CREATURE_MAXLEVEL, "UPDATE creature_template SET maxlevel = ? WHERE entry = ?", CONNECTION_ASYNC);
 	PrepareStatement(WORLD_UPD_CREATURE_NPCFLAG, "UPDATE creature_template SET npcflag = ? WHERE entry = ?", CONNECTION_ASYNC);

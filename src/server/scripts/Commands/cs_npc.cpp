@@ -198,9 +198,10 @@ public:
             { "entry",      rbac::RBAC_PERM_COMMAND_NPC_SET_ENTRY,     false, &HandleNpcSetEntryCommand,         "" },
             { "factionid",  rbac::RBAC_PERM_COMMAND_NPC_SET_FACTIONID, false, &HandleNpcSetFactionIdCommand,     "" },
             { "flag",       rbac::RBAC_PERM_COMMAND_NPC_SET_FLAG,      false, &HandleNpcSetFlagCommand,          "" },
+			{ "health",		rbac::RBAC_PERM_COMMAND_NPC_SET_HEALTH,	   false, &HandleNpcSetHealthCommand,        "" },
 			{ "level",      rbac::RBAC_PERM_COMMAND_NPC_SET_LEVEL,     false, &HandleNpcSetLevelCommand,         "" },
-			{ "minlevel",   rbac::RBAC_PERM_COMMAND_NPC_SET_MINLEVEL,  false, &HandleNpcSetMinLevelCommand,         "" },
-			{ "maxlevel",   rbac::RBAC_PERM_COMMAND_NPC_SET_MAXLEVEL,  false, &HandleNpcSetMaxLevelCommand,         "" },
+			{ "minlevel",   rbac::RBAC_PERM_COMMAND_NPC_SET_MINLEVEL,  false, &HandleNpcSetMinLevelCommand,      "" },
+			{ "maxlevel",   rbac::RBAC_PERM_COMMAND_NPC_SET_MAXLEVEL,  false, &HandleNpcSetMaxLevelCommand,      "" },
 			{ "link",       rbac::RBAC_PERM_COMMAND_NPC_SET_LINK,      false, &HandleNpcSetLinkCommand,          "" },
             { "model",      rbac::RBAC_PERM_COMMAND_NPC_SET_MODEL,     false, &HandleNpcSetModelCommand,         "" },
             { "movetype",   rbac::RBAC_PERM_COMMAND_NPC_SET_MOVETYPE,  false, &HandleNpcSetMoveTypeCommand,      "" },
@@ -472,6 +473,59 @@ public:
 			creature->SetLevel(lvl);
 			creature->SaveToDB();
 			handler->PSendSysMessage("Creature's Current Level Set To: %u", lvl);
+		}
+
+		return true;
+	}
+
+
+	//change health modifier of creature
+	static bool HandleNpcSetHealthCommand(ChatHandler* handler, char const* args)
+	{
+		if (!*args)
+			return false;
+
+		float hp = (float)atoi((char*)args);
+		if (hp < 1)
+		{
+			handler->SendSysMessage(LANG_BAD_VALUE);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
+
+		Creature* creature = handler->getSelectedCreature();
+		if (!creature)
+		{
+			handler->SendSysMessage(LANG_SELECT_CREATURE);
+			handler->SetSentErrorMessage(true);
+			return false;
+		}
+
+		if (creature->IsPet())
+		{
+			handler->SendSysMessage("Cannot Set Health of a Pet.");
+			return false;
+		}
+		else
+		{
+			// Health is set in creature_template - not inside creature
+			float curr = creature->GetMaxHealth;
+			float themod = creature->GetCreatureTemplate()->ModHealth;
+			float basehealth = curr / themod;
+			float newmod = hp / basehealth;
+			// Update in memory..
+			if (CreatureTemplate const* cinfo = creature->GetCreatureTemplate())
+				const_cast<CreatureTemplate*>(cinfo)->ModHealth = newmod;
+
+			// ..and DB
+			PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_UPD_CREATURE_HEALTH);
+
+			stmt->setFloat(0, float(newmod));
+			stmt->setUInt32(1, creature->GetEntry());
+
+
+			WorldDatabase.Execute(stmt);
+			handler->PSendSysMessage("Health Set To: %u", newmod);
 		}
 
 		return true;

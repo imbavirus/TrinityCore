@@ -106,6 +106,7 @@ enum RBACPermissions
 	RBAC_PERM_COMMAND_PET_ATTACK							 = 54,
 	RBAC_PERM_COMMAND_NPC_SET_MINLEVEL						 = 55,
 	RBAC_PERM_COMMAND_NPC_SET_MAXLEVEL						 = 56,
+	RBAC_PERM_COMMAND_NPC_SET_HEALTH						 = 57,
     // Free space for core permissions (till 149)
     // Roles (Permissions with delegated permissions) use 199 and descending
     RBAC_PERM_COMMAND_RBAC                                   = 200,
