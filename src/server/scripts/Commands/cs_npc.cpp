@@ -509,7 +509,7 @@ public:
 		else
 		{
 			// Health is set in creature_template - not inside creature
-			float curr = creature->GetMaxHealth;
+			float curr = creature->GetMaxHealth();
 			float themod = creature->GetCreatureTemplate()->ModHealth;
 			float basehealth = curr / themod;
 			float newmod = hp / basehealth;
