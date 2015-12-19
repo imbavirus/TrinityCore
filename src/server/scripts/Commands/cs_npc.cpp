@@ -485,7 +485,7 @@ public:
 		if (!*args)
 			return false;
 
-		float hp = (float)atoi((char*)args);
+		uint32 hp = (uint32)atoi((char*)args);
 		if (hp < 1)
 		{
 			handler->SendSysMessage(LANG_BAD_VALUE);
