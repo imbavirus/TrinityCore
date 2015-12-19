@@ -525,7 +525,7 @@ public:
 
 
 			WorldDatabase.Execute(stmt);
-			handler->PSendSysMessage("Health Set To: %u", newmod);
+			handler->PSendSysMessage("Health Set To: %u", hp);
 		}
 
 		return true;
