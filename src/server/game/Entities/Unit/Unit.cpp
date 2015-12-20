@@ -6270,8 +6270,8 @@ bool Unit::HandleAuraProc(Unit* victim, uint32 /*damage*/, Aura* triggeredByAura
                     uint32 stack = triggeredByAura->GetStackAmount();
                     int32 const mod = (GetMap()->GetSpawnMode() & 1) ? 1500 : 1250;
                     int32 dmg = 0;
-                    for (uint8 i = 1; i < stack; ++i)
-                        dmg += mod * stack;
+                    for (uint8 i = 1; i <= stack; ++i)
+                        dmg += mod * i;
                     if (Unit* caster = triggeredByAura->GetCaster())
                         caster->CastCustomSpell(70701, SPELLVALUE_BASE_POINT0, dmg);
                     break;
@@ -11934,7 +11934,7 @@ void CharmInfo::InitPossessCreateSpells()
                 break;
         }
 
-        for (uint32 i = 0; i < CREATURE_MAX_SPELLS; ++i)
+        for (uint8 i = 0; i < CREATURE_MAX_SPELLS; ++i)
         {
             uint32 spellId = _unit->ToCreature()->m_spells[i];
             SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellId);
@@ -11943,7 +11943,7 @@ void CharmInfo::InitPossessCreateSpells()
                 if (spellInfo->IsPassive())
                     _unit->CastSpell(_unit, spellInfo, true);
                 else
-                    AddSpellToActionBar(spellInfo, ACT_PASSIVE);
+                    AddSpellToActionBar(spellInfo, ACT_PASSIVE, i % MAX_UNIT_ACTION_BAR_INDEX);
             }
         }
     }
@@ -12001,11 +12001,12 @@ void CharmInfo::InitCharmCreateSpells()
     }
 }
 
-bool CharmInfo::AddSpellToActionBar(SpellInfo const* spellInfo, ActiveStates newstate)
+bool CharmInfo::AddSpellToActionBar(SpellInfo const* spellInfo, ActiveStates newstate, uint8 preferredSlot)
 {
     uint32 spell_id = spellInfo->Id;
     uint32 first_id = spellInfo->GetFirstRankSpell()->Id;
 
+    ASSERT(preferredSlot < MAX_UNIT_ACTION_BAR_INDEX);
     // new spell rank can be already listed
     for (uint8 i = 0; i < MAX_UNIT_ACTION_BAR_INDEX; ++i)
     {
@@ -12022,9 +12023,10 @@ bool CharmInfo::AddSpellToActionBar(SpellInfo const* spellInfo, ActiveStates new
     // or use empty slot in other case
     for (uint8 i = 0; i < MAX_UNIT_ACTION_BAR_INDEX; ++i)
     {
-        if (!PetActionBar[i].GetAction() && PetActionBar[i].IsActionBarForSpell())
+        uint8 j = (preferredSlot + i) % MAX_UNIT_ACTION_BAR_INDEX;
+        if (!PetActionBar[j].GetAction() && PetActionBar[j].IsActionBarForSpell())
         {
-            SetActionBar(i, spell_id, newstate == ACT_DECIDE ? spellInfo->IsAutocastable() ? ACT_DISABLED : ACT_PASSIVE : newstate);
+            SetActionBar(j, spell_id, newstate == ACT_DECIDE ? spellInfo->IsAutocastable() ? ACT_DISABLED : ACT_PASSIVE : newstate);
             return true;
         }
     }
@@ -12437,7 +12439,6 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
                 switch (triggeredByAura->GetAuraType())
                 {
                     case SPELL_AURA_PROC_TRIGGER_SPELL:
-                    case SPELL_AURA_PROC_TRIGGER_SPELL_2:
                     {
                         TC_LOG_DEBUG("spells", "ProcDamageAndSpell: casting spell %u (triggered by %s aura of spell %u)", spellInfo->Id, (isVictim?"a victim's":"an attacker's"), triggeredByAura->GetId());
                         // Don`t drop charge or add cooldown for not started trigger
@@ -16322,22 +16323,8 @@ void Unit::BuildValuesUpdate(uint8 updateType, ByteBuffer* data, Player* target)
                                 }
 
                     if (cinfo->flags_extra & CREATURE_FLAG_EXTRA_TRIGGER)
-                    {
                         if (target->IsGameMaster())
-                        {
-                            if (cinfo->Modelid1)
-                                displayId = cinfo->Modelid1;    // Modelid1 is a visible model for gms
-                            else
-                                displayId = 17519;              // world visible trigger's model
-                        }
-                        else
-                        {
-                            if (cinfo->Modelid2)
-                                displayId = cinfo->Modelid2;    // Modelid2 is an invisible model for players
-                            else
-                                displayId = 11686;              // world invisible trigger's model
-                        }
-                    }
+                            displayId = cinfo->GetFirstVisibleModel();
                 }
 
                 fieldBuffer << uint32(displayId);

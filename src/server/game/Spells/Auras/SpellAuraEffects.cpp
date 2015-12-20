@@ -368,7 +368,7 @@ pAuraEffectHandler AuraEffectHandler[TOTAL_AURAS]=
     &AuraEffect::HandleUnused,                                    //306 unused (4.3.4)
     &AuraEffect::HandleUnused,                                    //307 unused (4.3.4)
     &AuraEffect::HandleNULL,                                      //308 new aura for hunter traps
-    &AuraEffect::HandleUnused,                                    //309 unused (4.3.4)
+    &AuraEffect::HandleNULL,                                      //309 SPELL_AURA_MOD_RESILIENCE
     &AuraEffect::HandleNoImmediateEffect,                         //310 SPELL_AURA_MOD_CREATURE_AOE_DAMAGE_AVOIDANCE implemented in Spell::CalculateDamageDone
     &AuraEffect::HandleNULL,                                      //311 0 spells in 3.3.5
     &AuraEffect::HandleNULL,                                      //312 0 spells in 3.3.5
@@ -420,13 +420,13 @@ pAuraEffectHandler AuraEffectHandler[TOTAL_AURAS]=
     &AuraEffect::HandleNULL,                                      //358 SPELL_AURA_358
     &AuraEffect::HandleNULL,                                      //359 SPELL_AURA_359
     &AuraEffect::HandleNULL,                                      //360 SPELL_AURA_PROC_TRIGGER_SPELL_COPY
-    &AuraEffect::HandleNULL,                                      //361 SPELL_AURA_PROC_TRIGGER_SPELL_2 implemented in Unit::ProcDamageAndSpellFor
+    &AuraEffect::HandleNULL,                                      //361 SPELL_AURA_OVERRIDE_AUTOATTACK_WITH_MELEE_SPELL
     &AuraEffect::HandleUnused,                                    //362 unused (4.3.4)
     &AuraEffect::HandleNULL,                                      //363 SPELL_AURA_MOD_NEXT_SPELL
     &AuraEffect::HandleUnused,                                    //364 unused (4.3.4)
     &AuraEffect::HandleNULL,                                      //365 SPELL_AURA_MAX_FAR_CLIP_PLANE
     &AuraEffect::HandleOverrideSpellPowerByAttackPower,           //366 SPELL_AURA_OVERRIDE_SPELL_POWER_BY_AP_PCT
-    &AuraEffect::HandleNULL,                                      //367 SPELL_AURA_367
+    &AuraEffect::HandleNULL,                                      //367 SPELL_AURA_OVERRIDE_AUTOATTACK_WITH_RANGED_SPELL
     &AuraEffect::HandleUnused,                                    //368 unused (4.3.4)
     &AuraEffect::HandleNULL,                                      //369 SPELL_AURA_ENABLE_POWER_BAR_TIMER
     &AuraEffect::HandleNULL,                                      //370 SPELL_AURA_SET_FAIR_FAR_CLIP
@@ -435,13 +435,13 @@ pAuraEffectHandler AuraEffectHandler[TOTAL_AURAS]=
     &AuraEffect::HandleNULL,                                      //373
     &AuraEffect::HandleNULL,                                      //374 SPELL_AURA_MODIFY_FALL_DAMAGE_PCT
     &AuraEffect::HandleNULL,                                      //375
-    &AuraEffect::HandleNULL,                                      //376
-    &AuraEffect::HandleNULL,                                      //377
+    &AuraEffect::HandleNULL,                                      //376 SPELL_AURA_MOD_CURRENCY_GAIN_2
+    &AuraEffect::HandleNULL,                                      //377 SPELL_AURA_CAST_WHILE_WALKING_2
     &AuraEffect::HandleNULL,                                      //378
     &AuraEffect::HandleNULL,                                      //379
     &AuraEffect::HandleNULL,                                      //380
     &AuraEffect::HandleNULL,                                      //381
-    &AuraEffect::HandleNULL,                                      //382
+    &AuraEffect::HandleNULL,                                      //382 SPELL_AURA_MOD_PET_STAT_PCT
     &AuraEffect::HandleNULL,                                      //383 SPELL_AURA_IGNORE_SPELL_COOLDOWN
     &AuraEffect::HandleNULL,                                      //384
     &AuraEffect::HandleNULL,                                      //385 SPELL_AURA_CHANCE_OVERRIDE_AUTOATTACK_WITH_SPELL_ON_SELF
@@ -454,17 +454,17 @@ pAuraEffectHandler AuraEffectHandler[TOTAL_AURAS]=
     &AuraEffect::HandleNULL,                                      //392
     &AuraEffect::HandleNULL,                                      //393
     &AuraEffect::HandleNULL,                                      //394
-    &AuraEffect::HandleNULL,                                      //395
+    &AuraEffect::HandleNULL,                                      //395 SPELL_AURA_AREA_TRIGGER
     &AuraEffect::HandleNULL,                                      //396
     &AuraEffect::HandleNULL,                                      //397
     &AuraEffect::HandleNULL,                                      //398
     &AuraEffect::HandleNULL,                                      //399
-    &AuraEffect::HandleNULL,                                      //400
+    &AuraEffect::HandleAuraModSkill,                              //400 SPELL_AURA_MOD_SKILL_2
     &AuraEffect::HandleNULL,                                      //401
     &AuraEffect::HandleNULL,                                      //402
     &AuraEffect::HandleNULL,                                      //403
     &AuraEffect::HandleOverrideAttackPowerBySpellPower,           //404 SPELL_AURA_OVERRIDE_ATTACK_POWER_BY_SP_PCT
-    &AuraEffect::HandleNULL,                                      //405
+    &AuraEffect::HandleNULL,                                      //405 SPELL_AURA_MOD_RATING_PCT
     &AuraEffect::HandleNULL,                                      //406
     &AuraEffect::HandleNULL,                                      //407 SPELL_AURA_MOD_FEAR_2
     &AuraEffect::HandleNULL,                                      //408
@@ -475,12 +475,12 @@ pAuraEffectHandler AuraEffectHandler[TOTAL_AURAS]=
     &AuraEffect::HandleNULL,                                      //413
     &AuraEffect::HandleNULL,                                      //414
     &AuraEffect::HandleNULL,                                      //415
-    &AuraEffect::HandleNULL,                                      //416
-    &AuraEffect::HandleNULL,                                      //417
-    &AuraEffect::HandleNULL,                                      //418
+    &AuraEffect::HandleNULL,                                      //416 SPELL_AURA_MOD_COOLDOWN_BY_HASTE_EFFECTS
+    &AuraEffect::HandleNULL,                                      //417 SPELL_AURA_MOD_GLOBAL_COOLDOWN_BY_HASTE_EFFECTS
+    &AuraEffect::HandleNULL,                                      //418 SPELL_AURA_MOD_MAX_POWER
     &AuraEffect::HandleAuraModIncreaseBaseManaPercent,            //419 SPELL_AURA_MOD_BASE_MANA_PCT
     &AuraEffect::HandleNULL,                                      //420 SPELL_AURA_MOD_BATTLE_PET_XP_PCT
-    &AuraEffect::HandleNULL,                                      //421
+    &AuraEffect::HandleNULL,                                      //421 SPELL_AURA_MOD_ABSORB_EFFECTS_AMOUNT_PCT
     &AuraEffect::HandleNULL,                                      //422
     &AuraEffect::HandleNULL,                                      //423
     &AuraEffect::HandleNULL,                                      //424
@@ -1277,7 +1277,6 @@ void AuraEffect::HandleProc(AuraApplication* aurApp, ProcEventInfo& eventInfo)
     switch (GetAuraType())
     {
         case SPELL_AURA_PROC_TRIGGER_SPELL:
-        case SPELL_AURA_PROC_TRIGGER_SPELL_2:
             HandleProcTriggerSpellAuraProc(aurApp, eventInfo);
             break;
         case SPELL_AURA_PROC_TRIGGER_SPELL_WITH_VALUE:
@@ -2098,43 +2097,43 @@ void AuraEffect::HandleAuraTransform(AuraApplication const* aurApp, uint8 mode, 
                         {
                             // Blood Elf
                             case RACE_BLOODELF:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 17829 : 17830);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 17830 : 17829);
                                 break;
                             // Orc
                             case RACE_ORC:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 10139 : 10140);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 10140 : 10139);
                                 break;
                             // Troll
                             case RACE_TROLL:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 10135 : 10134);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 10134 : 10135);
                                 break;
                             // Tauren
                             case RACE_TAUREN:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 10136 : 10147);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 10147 : 10136);
                                 break;
                             // Undead
                             case RACE_UNDEAD_PLAYER:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 10146 : 10145);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 10145 : 10146);
                                 break;
                             // Draenei
                             case RACE_DRAENEI:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 17827 : 17828);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 17828 : 17827);
                                 break;
                             // Dwarf
                             case RACE_DWARF:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 10141 : 10142);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 10142 : 10141);
                                 break;
                             // Gnome
                             case RACE_GNOME:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 10148 : 10149);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 10149 : 10148);
                                 break;
                             // Human
                             case RACE_HUMAN:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 10137 : 10138);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 10138 : 10137);
                                 break;
                             // Night Elf
                             case RACE_NIGHTELF:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 10143 : 10144);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 10144 : 10143);
                                 break;
                             default:
                                 break;
@@ -2157,43 +2156,43 @@ void AuraEffect::HandleAuraTransform(AuraApplication const* aurApp, uint8 mode, 
                         {
                             // Blood Elf
                             case RACE_BLOODELF:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 25032 : 25043);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 25043 : 25032);
                                 break;
                             // Orc
                             case RACE_ORC:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 25039 : 25050);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 25050 : 25039);
                                 break;
                             // Troll
                             case RACE_TROLL:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 25041 : 25052);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 25052 : 25041);
                                 break;
                             // Tauren
                             case RACE_TAUREN:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 25040 : 25051);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 25051 : 25040);
                                 break;
                             // Undead
                             case RACE_UNDEAD_PLAYER:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 25042 : 25053);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 25053 : 25042);
                                 break;
                             // Draenei
                             case RACE_DRAENEI:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 25033 : 25044);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 25044 : 25033);
                                 break;
                             // Dwarf
                             case RACE_DWARF:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 25034 : 25045);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 25045 : 25034);
                                 break;
                             // Gnome
                             case RACE_GNOME:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 25035 : 25046);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 25035 : 25046);
                                 break;
                             // Human
                             case RACE_HUMAN:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 25037 : 25048);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 25037 : 25048);
                                 break;
                             // Night Elf
                             case RACE_NIGHTELF:
-                                target->SetDisplayId(target->getGender() == GENDER_MALE ? 25038 : 25049);
+                                target->SetDisplayId(target->getGender() == GENDER_FEMALE ? 25038 : 25049);
                                 break;
                             default:
                                 break;
@@ -4911,17 +4910,10 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                 {
                     if (caster)
                     {
-                        switch (caster->getGender())
-                        {
-                            case GENDER_FEMALE:
-                                caster->CastSpell(target, 37095, true, NULL, this); // Blood Elf Disguise
-                                break;
-                            case GENDER_MALE:
-                                caster->CastSpell(target, 37093, true, NULL, this);
-                                break;
-                            default:
-                                break;
-                        }
+                        if (caster->getGender() == GENDER_FEMALE)
+                            caster->CastSpell(target, 37095, true, NULL, this); // Blood Elf Disguise
+                        else
+                            caster->CastSpell(target, 37093, true, NULL, this);
                     }
                     break;
                 }
@@ -4935,15 +4927,10 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                 case 46354:                                     // Blood Elf Illusion
                     if (caster)
                     {
-                        switch (caster->getGender())
-                        {
-                            case GENDER_FEMALE:
-                                caster->CastSpell(target, 46356, true, NULL, this);
-                                break;
-                            case GENDER_MALE:
-                                caster->CastSpell(target, 46355, true, NULL, this);
-                                break;
-                        }
+                        if (caster->getGender() == GENDER_FEMALE)
+                            caster->CastSpell(target, 46356, true, NULL, this);
+                        else
+                            caster->CastSpell(target, 46355, true, NULL, this);
                     }
                     break;
                 case 46361:                                     // Reinforced Net

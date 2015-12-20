@@ -2293,6 +2293,11 @@ void Player::SetGameMaster(bool on)
     UpdateObjectVisibility();
 }
 
+bool Player::CanBeGameMaster() const
+{
+    return m_session && m_session->HasPermission(rbac::RBAC_PERM_COMMAND_GM);
+}
+
 void Player::SetGMVisible(bool on)
 {
     if (on)
@@ -4361,7 +4366,7 @@ Corpse* Player::CreateCorpse()
     uint8 haircolor = GetByteValue(PLAYER_BYTES, PLAYER_BYTES_OFFSET_HAIR_COLOR_ID);
     uint8 facialhair = GetByteValue(PLAYER_BYTES_2, PLAYER_BYTES_2_OFFSET_FACIAL_STYLE);
 
-    _cfb1 = ((0x00) | (getRace() << 8) | (getGender() << 16) | (skin << 24));
+    _cfb1 = ((0x00) | (getRace() << 8) | (GetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_GENDER) << 16) | (skin << 24));
     _cfb2 = ((face) | (hairstyle << 8) | (haircolor << 16) | (facialhair << 24));
 
     corpse->SetUInt32Value(CORPSE_FIELD_BYTES_1, _cfb1);
@@ -5535,6 +5540,10 @@ void Player::SetSkill(uint16 id, uint16 step, uint16 newVal, uint16 maxVal)
                 // temporary bonuses
                 AuraEffectList const& mModSkill = GetAuraEffectsByType(SPELL_AURA_MOD_SKILL);
                 for (AuraEffectList::const_iterator j = mModSkill.begin(); j != mModSkill.end(); ++j)
+                    if ((*j)->GetMiscValue() == int32(id))
+                        (*j)->HandleEffect(this, AURA_EFFECT_HANDLE_SKILL, true);
+                AuraEffectList const& mModSkill2 = GetAuraEffectsByType(SPELL_AURA_MOD_SKILL_2);
+                for (AuraEffectList::const_iterator j = mModSkill2.begin(); j != mModSkill2.end(); ++j)
                     if ((*j)->GetMiscValue() == int32(id))
                         (*j)->HandleEffect(this, AURA_EFFECT_HANDLE_SKILL, true);
 
@@ -12657,36 +12666,25 @@ void Player::TradeCancel(bool sendback)
 
 void Player::UpdateSoulboundTradeItems()
 {
-    if (m_itemSoulboundTradeable.empty())
-        return;
-
     // also checks for garbage data
-    for (ItemDurationList::iterator itr = m_itemSoulboundTradeable.begin(); itr != m_itemSoulboundTradeable.end();)
+    for (GuidUnorderedSet::iterator itr = m_itemSoulboundTradeable.begin(); itr != m_itemSoulboundTradeable.end();)
     {
-        ASSERT(*itr);
-        if ((*itr)->GetOwnerGUID() != GetGUID())
-        {
-            m_itemSoulboundTradeable.erase(itr++);
-            continue;
-        }
-        if ((*itr)->CheckSoulboundTradeExpire())
-        {
-            m_itemSoulboundTradeable.erase(itr++);
-            continue;
-        }
-        ++itr;
+        Item* item = GetItemByGuid(*itr);
+        if (!item || item->GetOwnerGUID() != GetGUID() || item->CheckSoulboundTradeExpire())
+            itr = m_itemSoulboundTradeable.erase(itr);
+        else
+            ++itr;
     }
 }
 
 void Player::AddTradeableItem(Item* item)
 {
-    m_itemSoulboundTradeable.push_back(item);
+    m_itemSoulboundTradeable.insert(item->GetGUID());
 }
 
-/// @todo should never allow an item to be added to m_itemSoulboundTradeable twice
 void Player::RemoveTradeableItem(Item* item)
 {
-    m_itemSoulboundTradeable.remove(item);
+    m_itemSoulboundTradeable.erase(item->GetGUID());
 }
 
 void Player::UpdateItemDuration(uint32 time, bool realtimeonly)
@@ -18429,17 +18427,28 @@ bool Player::CheckInstanceLoginValid(Map* map)
     {
         // cannot be in raid instance without a group
         if (!GetGroup())
-            return false;
+            return IsInstanceLoginGameMasterException();
     }
     else
     {
         // cannot be in normal instance without a group and more players than 1 in instance
         if (!GetGroup() && map->GetPlayersCountExceptGMs() > 1)
-            return false;
+            return IsInstanceLoginGameMasterException();
     }
 
     // do checks for satisfy accessreqs, instance full, encounter in progress (raid), perm bind group != perm bind player
-    return sMapMgr->CanPlayerEnter(map->GetId(), this, true);
+    return sMapMgr->CanPlayerEnter(map->GetId(), this, true) || IsInstanceLoginGameMasterException();
+}
+
+bool Player::IsInstanceLoginGameMasterException() const
+{
+    if (CanBeGameMaster())
+    {
+        ChatHandler(GetSession()).PSendSysMessage("You didn't get kicked out of the instance even if Player::CheckInstanceLoginValid() returned false and without .gm on flag");
+        return true;
+    }
+    else
+        return false;
 }
 
 bool Player::CheckInstanceCount(uint32 instanceId) const
@@ -21022,7 +21031,7 @@ void Player::InitDisplayIds()
         return;
     }
 
-    uint8 gender = getGender();
+    uint8 gender = GetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_GENDER);
     switch (gender)
     {
         case GENDER_FEMALE:

@@ -2655,7 +2655,7 @@ std::vector<SpellInfo::CostData> SpellInfo::CalcPowerCost(Unit const* caster, Sp
                     modOwner->ApplySpellMod(Id, SPELLMOD_SPELL_COST2, powerCost);
             }
 
-            if (!caster->IsControlledByPlayer() && G3D::fuzzyEq(power->ManaCostPercentage, 0.0f))
+            if (!caster->IsControlledByPlayer() && G3D::fuzzyEq(power->ManaCostPercentage, 0.0f) && SpellLevel)
             {
                 if (Attributes & SPELL_ATTR0_LEVEL_DAMAGE_CALCULATION)
                 {
@@ -3002,6 +3002,7 @@ bool SpellInfo::_IsPositiveEffect(uint32 effIndex, bool deep) const
                 case SPELL_AURA_MOD_DAMAGE_DONE:            // dependent from bas point sign (negative -> negative)
                 case SPELL_AURA_MOD_STAT:
                 case SPELL_AURA_MOD_SKILL:
+                case SPELL_AURA_MOD_SKILL_2:
                 case SPELL_AURA_MOD_DODGE_PERCENT:
                 case SPELL_AURA_MOD_HEALING_PCT:
                 case SPELL_AURA_MOD_HEALING_DONE:
