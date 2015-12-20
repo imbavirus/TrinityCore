@@ -480,6 +480,14 @@ namespace WorldPackets
         class ClearRaidMarker;
     }
 
+    namespace Pets
+    {
+        class ClientPetAction;
+        class PetStopAttack;
+        class PetSetAction;
+        class PetRename;
+    }
+
     namespace Petition
     {
         class DeclinePetition;
@@ -1449,13 +1457,13 @@ class WorldSession
         void HandleTutorialFlag(WorldPackets::Misc::TutorialSetFlag& packet);
 
         //Pet
-        void HandlePetAction(WorldPacket& recvData);
-        void HandlePetStopAttack(WorldPacket& recvData);
+        void HandlePetAction(WorldPackets::Pets::ClientPetAction& packet);
+        void HandlePetStopAttack(WorldPackets::Pets::PetStopAttack& packet);
         void HandlePetActionHelper(Unit* pet, ObjectGuid guid1, uint32 spellid, uint16 flag, ObjectGuid guid2, float x, float y, float z);
         void HandleQueryPetName(WorldPackets::Query::QueryPetName& packet);
-        void HandlePetSetAction(WorldPacket& recvData);
+        void HandlePetSetAction(WorldPackets::Pets::PetSetAction& packet);
         void HandlePetAbandon(WorldPacket& recvData);
-        void HandlePetRename(WorldPacket& recvData);
+        void HandlePetRename(WorldPackets::Pets::PetRename& packet);
         void HandlePetCancelAuraOpcode(WorldPacket& recvPacket);
         void HandlePetSpellAutocastOpcode(WorldPacket& recvPacket);
         void HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& petCastSpell);
