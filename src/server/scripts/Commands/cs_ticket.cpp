@@ -378,7 +378,7 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 		return false;
 
 	if (!sSupportMgr->GetTicketSystemStatus())
-		return;
+		return false;
 
 	Player* plr = GetPlayer();
 	Ticket* ticket;
@@ -443,7 +443,7 @@ std::vector<ChatCommand> ticket_commandscript::GetCommands() const
 		{ "list",			rbac::RBAC_PERM_COMMAND_TICKET_LIST,			true, &HandleTicketListCommand<Ticket>,          "" },
 		{ "unassign",		rbac::RBAC_PERM_COMMAND_TICKET_UNASSIGN,		true, &HandleTicketUnAssignCommand<Ticket>,      "" },
 		{ "view",			rbac::RBAC_PERM_COMMAND_TICKET_VIEW,			true, &HandleTicketGetByIdCommand<Ticket>,       "" },
-		{ "create",			rbac::RBAC_PERM_COMMAND_TICKET_CREATE,			true, &HandleTicketAssignToCommand<Ticket>,      "" },
+		{ "create",			rbac::RBAC_PERM_COMMAND_TICKET_CREATE,			true, &HandleTicketCreateCommand<Ticket>,      "" },
 		{ "bug",            rbac::RBAC_PERM_COMMAND_TICKET_BUG,             true, NULL, "", ticketBugCommandTable },
         { "complaint",      rbac::RBAC_PERM_COMMAND_TICKET_COMPLAINT,       true, NULL,              "", ticketComplaintCommandTable },
         { "reset",          rbac::RBAC_PERM_COMMAND_TICKET_RESET,           true, NULL,                  "", ticketResetCommandTable },
