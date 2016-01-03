@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -15525,7 +15525,7 @@ void Unit::SendTeleportPacket(Position& pos)
         if (TransportBase* transportBase = GetDirectTransport())
             transportBase->CalculatePassengerOffset(moveTeleport.Pos.m_positionX, moveTeleport.Pos.m_positionY, moveTeleport.Pos.m_positionZ);
         moveTeleport.TransportGUID = GetTransGUID();
-        moveTeleport.Facing = GetOrientation();
+        moveTeleport.Facing = pos.GetOrientation();
         moveTeleport.SequenceIndex = m_movementCounter++;
         ToPlayer()->SendDirectMessage(moveTeleport.Write());
     }

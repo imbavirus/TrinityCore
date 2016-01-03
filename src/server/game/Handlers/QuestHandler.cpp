@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -397,19 +397,6 @@ void WorldSession::HandleQuestgiverRequestRewardOpcode(WorldPackets::Quest::Ques
 void WorldSession::HandleQuestgiverCancel(WorldPacket& /*recvData*/)
 {
     _player->PlayerTalkClass->SendCloseGossip();
-}
-
-void WorldSession::HandleQuestLogSwapQuest(WorldPacket& recvData)
-{
-    uint8 slot1, slot2;
-    recvData >> slot1 >> slot2;
-
-    if (slot1 == slot2 || slot1 >= MAX_QUEST_LOG_SIZE || slot2 >= MAX_QUEST_LOG_SIZE)
-        return;
-
-    TC_LOG_DEBUG("network", "WORLD: Received CMSG_QUESTLOG_SWAP_QUEST slot 1 = %u, slot 2 = %u", slot1, slot2);
-
-    GetPlayer()->SwapQuestSlot(slot1, slot2);
 }
 
 void WorldSession::HandleQuestLogRemoveQuest(WorldPackets::Quest::QuestLogRemoveQuest& packet)
