@@ -64,6 +64,9 @@ public:
     template<typename T>
     static bool HandleTicketGetByIdCommand(ChatHandler* handler, char const* args);
 
+	template<typename T>
+	static bool HandleTicketCreateCommand(ChatHandler* handler, char const* args);
+
     static bool HandleTicketResetAllCommand(ChatHandler* handler, char const* /*args*/)
     {
         if (sSupportMgr->GetOpenTicketCount<BugTicket>() || sSupportMgr->GetOpenTicketCount<ComplaintTicket>() || sSupportMgr->GetOpenTicketCount<SuggestionTicket>())
@@ -364,6 +367,30 @@ bool ticket_commandscript::HandleTicketGetByIdCommand(ChatHandler* handler, char
     return true;
 }
 
+template<typename T>
+bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char const* args)
+{
+	if (!*args)
+		return false;
+
+	char* note = strtok((char*)args, "\n");
+	if (!note)
+		return false;
+
+	if (!sSupportMgr->GetTicketSystemStatus())
+		return;
+
+	Player* plr = GetPlayer();
+	Ticket* ticket;
+	G3D::Vector3 position;
+	position = G3D::Vector3(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
+	ticket->SetPosition(plr->GetMapId(), position);
+	ticket->SetFacing(plr->GetOrientation());
+	ticket->SetNote(note);
+
+	sSupportMgr->AddTicket(ticket);
+}
+
 std::vector<ChatCommand> ticket_commandscript::GetCommands() const
 {
     static std::vector<ChatCommand> ticketBugCommandTable =
@@ -408,7 +435,16 @@ std::vector<ChatCommand> ticket_commandscript::GetCommands() const
     };
     static std::vector<ChatCommand> ticketCommandTable =
     {
-        { "bug",            rbac::RBAC_PERM_COMMAND_TICKET_BUG,             true, NULL, "", ticketBugCommandTable },
+		{ "assign",			rbac::RBAC_PERM_COMMAND_TICKET_ASSIGN,			true, &HandleTicketAssignToCommand<Ticket>,      "" },
+		{ "close",			rbac::RBAC_PERM_COMMAND_TICKET_CLOSE,			true, &HandleTicketCloseByIdCommand<Ticket>,     "" },
+		{ "closedlist",		rbac::RBAC_PERM_COMMAND_TICKET_CLOSEDLIST,		true, &HandleTicketListClosedCommand<Ticket>,    "" },
+		{ "comment",		rbac::RBAC_PERM_COMMAND_TICKET_COMMENT,			true, &HandleTicketCommentCommand<Ticket>,       "" },
+		{ "delete",			rbac::RBAC_PERM_COMMAND_TICKET_DELETE,			true, &HandleTicketDeleteByIdCommand<Ticket>,    "" },
+		{ "list",			rbac::RBAC_PERM_COMMAND_TICKET_LIST,			true, &HandleTicketListCommand<Ticket>,          "" },
+		{ "unassign",		rbac::RBAC_PERM_COMMAND_TICKET_UNASSIGN,		true, &HandleTicketUnAssignCommand<Ticket>,      "" },
+		{ "view",			rbac::RBAC_PERM_COMMAND_TICKET_VIEW,			true, &HandleTicketGetByIdCommand<Ticket>,       "" },
+		{ "create",			rbac::RBAC_PERM_COMMAND_TICKET_CREATE,			true, &HandleTicketAssignToCommand<Ticket>,      "" },
+		{ "bug",            rbac::RBAC_PERM_COMMAND_TICKET_BUG,             true, NULL, "", ticketBugCommandTable },
         { "complaint",      rbac::RBAC_PERM_COMMAND_TICKET_COMPLAINT,       true, NULL,              "", ticketComplaintCommandTable },
         { "reset",          rbac::RBAC_PERM_COMMAND_TICKET_RESET,           true, NULL,                  "", ticketResetCommandTable },
         { "suggestion",     rbac::RBAC_PERM_COMMAND_TICKET_SUGGESTION,      true, NULL,             "", ticketSuggestionCommandTable },

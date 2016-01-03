@@ -112,7 +112,7 @@ namespace WorldPackets
             SupportTicketHeader Header;
             std::string Note;
         };
-
+		
         class SupportTicketSubmitComplaint final : public ClientPacket
         {
         public:

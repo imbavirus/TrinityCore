@@ -1150,7 +1150,7 @@ class WorldSession
         void HandleSupportTicketSubmitBug(WorldPackets::Ticket::SupportTicketSubmitBug& packet);
         void HandleSupportTicketSubmitSuggestion(WorldPackets::Ticket::SupportTicketSubmitSuggestion& packet);
         void HandleSupportTicketSubmitComplaint(WorldPackets::Ticket::SupportTicketSubmitComplaint& packet);
-        void HandleBugReportOpcode(WorldPackets::Ticket::BugReport& bugReport);
+		void HandleBugReportOpcode(WorldPackets::Ticket::BugReport& bugReport);
 
         void HandleTogglePvP(WorldPackets::Misc::TogglePvP& packet);
         void HandleSetPvP(WorldPackets::Misc::SetPvP& packet);

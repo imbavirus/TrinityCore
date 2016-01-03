@@ -55,6 +55,7 @@ public:
     bool IsAssigned() const { return !_assignedTo.IsEmpty(); }
     bool IsAssignedTo(ObjectGuid guid) const { return guid == _assignedTo; }
     bool IsAssignedNotTo(ObjectGuid guid) const { return IsAssigned() && !IsAssignedTo(guid); }
+	void SetFacing(float facing) { _facing = facing; }
 
     uint32 GetId() const { return _id; }
     ObjectGuid GetPlayerGuid() const { return _playerGuid; }
@@ -100,6 +101,7 @@ public:
 
 protected:
     uint32 _id;
+	float _facing;
     ObjectGuid _playerGuid;
     uint16 _mapId;
     G3D::Vector3 _pos;
@@ -107,6 +109,7 @@ protected:
     ObjectGuid _closedBy; // 0 = Open, -1 = Console, playerGuid = player abandoned ticket, other = GM who closed it.
     ObjectGuid _assignedTo;
     std::string _comment;
+	std::string _note;
 };
 
 class BugTicket : public Ticket
@@ -194,6 +197,7 @@ private:
 };
 
 typedef std::map<uint32, BugTicket*> BugTicketList;
+typedef std::map<uint32, Ticket*> TicketList;
 typedef std::map<uint32, ComplaintTicket*> ComplaintTicketList;
 typedef std::map<uint32, SuggestionTicket*> SuggestionTicketList;
 
@@ -240,11 +244,13 @@ public:
     void SetComplaintSystemStatus(bool status) { _complaintSystemStatus = status; }
     void SetSuggestionSystemStatus(bool status) { _suggestionSystemStatus = status; }
 
-    void LoadBugTickets();
+	void LoadTickets();
+	void LoadBugTickets();
     void LoadComplaintTickets();
     void LoadSuggestionTickets();
 
-    void AddTicket(BugTicket* ticket);
+	void AddTicket(Ticket* ticket);
+	void AddTicket(BugTicket* ticket);
     void AddTicket(ComplaintTicket* ticket);
     void AddTicket(SuggestionTicket* ticket);
 
@@ -270,7 +276,8 @@ public:
 
     uint32 GenerateBugId() { return ++_lastBugId; }
     uint32 GenerateComplaintId() { return ++_lastComplaintId; }
-    uint32 GenerateSuggestionId() { return ++_lastSuggestionId; }
+	uint32 GenerateSuggestionId() { return ++_lastSuggestionId; }
+	uint32 GenerateTicketId() { return ++_lastTicketId; }
 
 private:
     bool _supportSystemStatus;
@@ -278,15 +285,18 @@ private:
     bool _bugSystemStatus;
     bool _complaintSystemStatus;
     bool _suggestionSystemStatus;
-    BugTicketList _bugTicketList;
+	TicketList _TicketList;
+	BugTicketList _bugTicketList;
     ComplaintTicketList _complaintTicketList;
     SuggestionTicketList _suggestionTicketList;
     uint32 _lastBugId;
     uint32 _lastComplaintId;
     uint32 _lastSuggestionId;
-    uint64 _lastChange;
-    uint32 _openBugTicketCount;
-    uint32 _openComplaintTicketCount;
+	uint32 _lastTicketId;
+	uint64 _lastChange;
+	uint32 _openTicketCount;
+	uint32 _openBugTicketCount;
+	uint32 _openComplaintTicketCount;
     uint32 _openSuggestionTicketCount;
 };
 

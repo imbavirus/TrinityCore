@@ -107,6 +107,16 @@ enum RBACPermissions
 	RBAC_PERM_COMMAND_NPC_SET_MINLEVEL						 = 55,
 	RBAC_PERM_COMMAND_NPC_SET_MAXLEVEL						 = 56,
 	RBAC_PERM_COMMAND_NPC_SET_HEALTH						 = 57,
+	RBAC_PERM_COMMAND_TICKET_ASSIGN							 = 58,
+    RBAC_PERM_COMMAND_TICKET_CLOSE							 = 59,
+    RBAC_PERM_COMMAND_TICKET_CLOSEDLIST						 = 60,
+    RBAC_PERM_COMMAND_TICKET_COMMENT						 = 61,
+    RBAC_PERM_COMMAND_TICKET_DELETE							 = 62,
+    RBAC_PERM_COMMAND_TICKET_LIST							 = 63,
+    RBAC_PERM_COMMAND_TICKET_UNASSIGN						 = 64,
+    RBAC_PERM_COMMAND_TICKET_VIEW							 = 65,
+    RBAC_PERM_COMMAND_TICKET_CREATE							 = 66,
+    
     // Free space for core permissions (till 149)
     // Roles (Permissions with delegated permissions) use 199 and descending
     RBAC_PERM_COMMAND_RBAC                                   = 200,

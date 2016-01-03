@@ -109,6 +109,13 @@ void BugTicket::SaveToDB() const
     CharacterDatabase.Execute(stmt);
 }
 
+void Ticket::DeleteFromDB()
+{
+	PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_GM_TICKET);
+	stmt->setUInt32(0, _id);
+	CharacterDatabase.Execute(stmt);
+}
+
 void BugTicket::DeleteFromDB()
 {
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_GM_BUG);
@@ -318,6 +325,84 @@ void SuggestionTicket::SaveToDB() const
     CharacterDatabase.Execute(stmt);
 }
 
+Ticket::Ticket() : _facing(0.0f) { }
+
+Ticket::Ticket(Player* player) : Ticket(player), _facing(0.0f)
+{
+	_id = sSupportMgr->GenerateTicketId();
+}
+
+void Ticket::LoadFromDB(Field* fields)
+{
+	uint8 idx = 0;
+	_id = fields[idx].GetUInt32();
+	_playerGuid = ObjectGuid::Create<HighGuid::Player>(fields[++idx].GetUInt64());
+	_note = fields[++idx].GetString();
+	_createTime = fields[++idx].GetUInt32();
+	_mapId = fields[++idx].GetUInt16();
+	_pos.x = fields[++idx].GetFloat();
+	_pos.y = fields[++idx].GetFloat();
+	_pos.z = fields[++idx].GetFloat();
+	_facing = fields[++idx].GetFloat();
+
+	int64 closedBy = fields[++idx].GetInt64();
+	if (closedBy == 0)
+		_closedBy = ObjectGuid::Empty;
+	else if (closedBy < 0)
+		_closedBy.SetRawValue(0, uint64(closedBy));
+	else
+		_closedBy = ObjectGuid::Create<HighGuid::Player>(uint64(closedBy));
+
+	uint64 assignedTo = fields[++idx].GetUInt64();
+	if (assignedTo == 0)
+		_assignedTo = ObjectGuid::Empty;
+	else
+		_assignedTo = ObjectGuid::Create<HighGuid::Player>(assignedTo);
+
+	_comment = fields[++idx].GetString();
+}
+
+
+void Ticket::SaveToDB() const
+{
+	uint8 idx = 0;
+	PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_REP_GM_TICKET);
+	stmt->setUInt32(idx, _id);
+	stmt->setUInt64(++idx, _playerGuid.GetCounter());
+	stmt->setString(++idx, _note);
+	stmt->setUInt16(++idx, _mapId);
+	stmt->setFloat(++idx, _pos.x);
+	stmt->setFloat(++idx, _pos.y);
+	stmt->setFloat(++idx, _pos.z);
+	stmt->setFloat(++idx, _facing);
+	stmt->setInt64(++idx, _closedBy.GetCounter());
+	stmt->setUInt64(++idx, _assignedTo.GetCounter());
+	stmt->setString(++idx, _comment);
+
+	CharacterDatabase.Execute(stmt);
+}
+
+std::string Ticket::FormatViewMessageString(ChatHandler& handler, bool detailed) const
+{
+	time_t curTime = time(nullptr);
+
+	std::stringstream ss;
+	ss << handler.PGetParseString(LANG_COMMAND_TICKETLISTGUID, _id);
+	ss << handler.PGetParseString(LANG_COMMAND_TICKETLISTNAME, GetPlayerName().c_str());
+	ss << handler.PGetParseString(LANG_COMMAND_TICKETLISTAGECREATE, (secsToTimeString(curTime - _createTime, true, false)).c_str());
+
+	if (!_assignedTo.IsEmpty())
+		ss << handler.PGetParseString(LANG_COMMAND_TICKETLISTASSIGNEDTO, GetAssignedToName().c_str());
+
+	if (detailed)
+	{
+		ss << handler.PGetParseString(LANG_COMMAND_TICKETLISTMESSAGE, _note.c_str());
+		if (!_comment.empty())
+			ss << handler.PGetParseString(LANG_COMMAND_TICKETLISTCOMMENT, _comment.c_str());
+	}
+	return ss.str();
+}
+
 void SuggestionTicket::DeleteFromDB()
 {
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_GM_SUGGESTION);
@@ -352,6 +437,9 @@ _openBugTicketCount(0), _openComplaintTicketCount(0), _openSuggestionTicketCount
 
 SupportMgr::~SupportMgr()
 {
+	for (auto const& b : _TicketList)
+		delete b.second;
+
     for (auto const& b : _bugTicketList)
         delete b.second;
 
@@ -369,6 +457,17 @@ void SupportMgr::Initialize()
     SetBugSystemStatus(sWorld->getBoolConfig(CONFIG_SUPPORT_BUGS_ENABLED));
     SetComplaintSystemStatus(sWorld->getBoolConfig(CONFIG_SUPPORT_COMPLAINTS_ENABLED));
     SetSuggestionSystemStatus(sWorld->getBoolConfig(CONFIG_SUPPORT_SUGGESTIONS_ENABLED));
+}
+
+template<>
+Ticket* SupportMgr::GetTicket<Ticket>(uint32 Id)
+{
+	TicketList::const_iterator itr = _TicketList.find(Id);
+	if (itr != _TicketList.end())
+		return itr->second;
+
+	return nullptr;
+
 }
 
 template<>
@@ -402,6 +501,9 @@ SuggestionTicket* SupportMgr::GetTicket<SuggestionTicket>(uint32 suggestionId)
     return nullptr;
 
 }
+
+template<>
+uint32 SupportMgr::GetOpenTicketCount<Ticket>() const { return _openTicketCount; }
 
 template<>
 uint32 SupportMgr::GetOpenTicketCount<BugTicket>() const { return _openBugTicketCount; }
@@ -547,6 +649,55 @@ void SupportMgr::LoadSuggestionTickets()
     TC_LOG_INFO("server.loading", ">> Loaded %u GM suggestions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
 }
 
+void SupportMgr::LoadTickets()
+{
+	uint32 oldMSTime = getMSTime();
+
+	for (auto const& c : _TicketList)
+		delete c.second;
+	_TicketList.clear();
+
+	_lastTicketId = 0;
+	_openTicketCount = 0;
+
+	PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKETS);
+	PreparedQueryResult result = CharacterDatabase.Query(stmt);
+	if (!result)
+	{
+		TC_LOG_INFO("server.loading", ">> Loaded 0 GM tickets. DB table `gm_ticket` is empty!");
+		return;
+	}
+
+	uint32 count = 0;
+	do
+	{
+		Field* fields = result->Fetch();
+		Ticket* ticket;
+		ticket->LoadFromDB(fields);
+
+		if (!ticket->IsClosed())
+			++_openTicketCount;
+
+		uint32 id = ticket->GetId();
+		if (_lastTicketId < id)
+			_lastTicketId = id;
+
+		_TicketList[id] = ticket;
+		++count;
+	} while (result->NextRow());
+
+	TC_LOG_INFO("server.loading", ">> Loaded %u GM tickets in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
+}
+
+void SupportMgr::AddTicket(Ticket* ticket)
+{
+	_TicketList[ticket->GetId()] = ticket;
+	if (!ticket->IsClosed())
+		++_openTicketCount;
+
+	ticket->SaveToDB();
+}
+
 void SupportMgr::AddTicket(BugTicket* ticket)
 {
     _bugTicketList[ticket->GetId()] = ticket;
@@ -572,6 +723,17 @@ void SupportMgr::AddTicket(SuggestionTicket* ticket)
         ++_openSuggestionTicketCount;
 
     ticket->SaveToDB();
+}
+
+template<>
+void SupportMgr::RemoveTicket<Ticket>(uint32 ticketId)
+{
+	if (Ticket* ticket = GetTicket<Ticket>(ticketId))
+	{
+		ticket->DeleteFromDB();
+		_TicketList.erase(ticketId);
+		delete ticket;
+	}
 }
 
 template<>
@@ -605,6 +767,18 @@ void SupportMgr::RemoveTicket<SuggestionTicket>(uint32 ticketId)
         _suggestionTicketList.erase(ticketId);
         delete ticket;
     }
+}
+
+template<>
+void SupportMgr::CloseTicket<Ticket>(uint32 ticketId, ObjectGuid closedBy)
+{
+	if (Ticket* ticket = GetTicket<Ticket>(ticketId))
+	{
+		ticket->SetClosedBy(closedBy);
+		if (!closedBy.IsEmpty())
+			--_openTicketCount;
+		ticket->SaveToDB();
+	}
 }
 
 template<>
@@ -694,6 +868,15 @@ void SupportMgr::ShowList<BugTicket>(ChatHandler& handler) const
 }
 
 template<>
+void SupportMgr::ShowList<Ticket>(ChatHandler& handler) const
+{
+	handler.SendSysMessage(LANG_COMMAND_TICKETSHOWLIST);
+	for (TicketList::const_iterator itr = _TicketList.begin(); itr != _TicketList.end(); ++itr)
+		if (!itr->second->IsClosed())
+			handler.SendSysMessage(itr->second->FormatViewMessageString(handler).c_str());
+}
+
+template<>
 void SupportMgr::ShowList<ComplaintTicket>(ChatHandler& handler) const
 {
     handler.SendSysMessage(LANG_COMMAND_TICKETSHOWLIST);
@@ -718,6 +901,15 @@ void SupportMgr::ShowClosedList<BugTicket>(ChatHandler& handler) const
     for (BugTicketList::const_iterator itr = _bugTicketList.begin(); itr != _bugTicketList.end(); ++itr)
         if (itr->second->IsClosed())
             handler.SendSysMessage(itr->second->FormatViewMessageString(handler).c_str());
+}
+
+template<>
+void SupportMgr::ShowClosedList<Ticket>(ChatHandler& handler) const
+{
+	handler.SendSysMessage(LANG_COMMAND_TICKETSHOWCLOSEDLIST);
+	for (TicketList::const_iterator itr = _TicketList.begin(); itr != _TicketList.end(); ++itr)
+		if (itr->second->IsClosed())
+			handler.SendSysMessage(itr->second->FormatViewMessageString(handler).c_str());
 }
 
 template<>
