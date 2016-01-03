@@ -1067,7 +1067,7 @@ struct PlayerConditionEntry
     uint32 MaxAvgItemLevel;                                         // 128
     uint32 MinAvgEquippedItemLevel;                                 // 129
     uint32 MaxAvgEquippedItemLevel;                                 // 130
-    int32 ChrSpecializationIndex;                                   // 131
+    uint32 ChrSpecializationIndex;                                   // 131
     int32 ChrSpecializationRole;                                    // 132
     LocalizedString* FailureDescription_lang;                       // 133
     int32 PowerType;                                                // 134
