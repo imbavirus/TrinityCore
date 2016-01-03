@@ -2379,17 +2379,14 @@ bool ConditionMgr::IsPlayerMeetingCondition(Player* player, PlayerConditionEntry
             return false;
     }
 
-    if (condition->ChrSpecializationRole >= 0)
-    {
-        if (ChrSpecializationEntry const* spec = sChrSpecializationStore.LookupEntry(player->GetSpecId(player->GetActiveTalentGroup())))
+    if (ChrSpecializationEntry const* spec = sChrSpecializationStore.LookupEntry(player->GetSpecId(player->GetActiveTalentGroup())))
         {
             if (spec->OrderIndex != condition->ChrSpecializationIndex)
                 return false;
 
-            if (condition->ChrSpecializationRole >= 0 && spec->Role != condition->ChrSpecializationRole)
+            if (spec->Role != condition->ChrSpecializationRole)
                 return false;
         }
-    }
 
     if (condition->SkillID[0] || condition->SkillID[1] || condition->SkillID[2] || condition->SkillID[3])
     {
