@@ -2381,10 +2381,10 @@ bool ConditionMgr::IsPlayerMeetingCondition(Player* player, PlayerConditionEntry
 
     if (ChrSpecializationEntry const* spec = sChrSpecializationStore.LookupEntry(player->GetSpecId(player->GetActiveTalentGroup())))
         {
-            if (condition->ChrSpecializationIndex >= 0 && spec->OrderIndex != uint32(condition->ChrSpecializationIndex))
+            if (spec->OrderIndex != uint32(condition->ChrSpecializationIndex))
                 return false;
 
-            if (condition->ChrSpecializationRole >= 0 && spec->Role != uint32(condition->ChrSpecializationRole))
+            if (spec->Role != uint32(condition->ChrSpecializationRole))
                 return false;
         }
 

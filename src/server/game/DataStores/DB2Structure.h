@@ -1054,10 +1054,10 @@ struct PlayerConditionEntry
     uint32 QuestKillID;                                             // 112
     uint32 QuestKillLogic;                                          // 113
     uint32 QuestKillMonster[4];                                     // 114-117
-    uint32 MinExpansionLevel;                                        // 118
-    uint32 MaxExpansionLevel;                                        // 119
-    uint32 MinExpansionTier;                                         // 120
-    uint32 MaxExpansionTier;                                         // 121
+    int32 MinExpansionLevel;                                        // 118
+    int32 MaxExpansionLevel;                                        // 119
+    int32 MinExpansionTier;                                         // 120
+    int32 MaxExpansionTier;                                         // 121
     uint32 MinGuildLevel;                                           // 122
     uint32 MaxGuildLevel;                                           // 123
     uint32 PhaseUseFlags;                                           // 124
@@ -1067,8 +1067,8 @@ struct PlayerConditionEntry
     uint32 MaxAvgItemLevel;                                         // 128
     uint32 MinAvgEquippedItemLevel;                                 // 129
     uint32 MaxAvgEquippedItemLevel;                                 // 130
-    uint32 ChrSpecializationIndex;                                   // 131
-    uint32 ChrSpecializationRole;                                    // 132
+    int32 ChrSpecializationIndex;                                   // 131
+    int32 ChrSpecializationRole;                                    // 132
     LocalizedString* FailureDescription_lang;                       // 133
     int32 PowerType;                                                // 134
     int32 PowerTypeComp;                                            // 135
