@@ -21,11 +21,12 @@
 
 inline time_t GetAge(uint64 t) { return (time(nullptr) - t) / DAY; }
 
-Ticket::Ticket() : _id(0), _mapId(0), _createTime(0) { }
+Ticket::Ticket() : _id(0), _mapId(0), _createTime(0), _facing(0.0f) { }
 
-Ticket::Ticket(Player* player) : _id(0), _mapId(0), _createTime(time(nullptr))
+Ticket::Ticket(Player* player) : _id(0), _mapId(0), _facing(0.0f), _createTime(time(nullptr))
 {
     _playerGuid = player->GetGUID();
+	_id = sSupportMgr->GenerateTicketId();
 }
 
 Ticket::~Ticket() { }
@@ -323,13 +324,6 @@ void SuggestionTicket::SaveToDB() const
     stmt->setString(++idx, _comment);
 
     CharacterDatabase.Execute(stmt);
-}
-
-Ticket::Ticket() : _facing(0.0f) { }
-
-Ticket::Ticket(Player* player) : Ticket(player), _facing(0.0f)
-{
-	_id = sSupportMgr->GenerateTicketId();
 }
 
 void Ticket::LoadFromDB(Field* fields)
