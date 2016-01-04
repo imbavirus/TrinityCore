@@ -2652,14 +2652,14 @@ bool ConditionMgr::IsPlayerMeetingCondition(Player* player, PlayerConditionEntry
             return false;
     }
 
-    if (condition->MinExpansionLevel != -1 && player->GetSession()->GetExpansion() < condition->MinExpansionLevel)
+    if (player->GetSession()->GetExpansion() < condition->MinExpansionLevel)
         return false;
 
-    if (condition->MaxExpansionLevel != -1 && player->GetSession()->GetExpansion() > condition->MaxExpansionLevel)
+    if (player->GetSession()->GetExpansion() > condition->MaxExpansionLevel)
         return false;
 
-    if (condition->MinExpansionLevel != -1 && condition->MinExpansionTier != -1 && !player->IsGameMaster()
-        && ((condition->MinExpansionLevel == sWorld->getIntConfig(CONFIG_EXPANSION) && condition->MinExpansionTier > 0) /*TODO: implement tier*/
+    if (!player->IsGameMaster()
+        && ((condition->MinExpansionLevel == sWorld->getIntConfig(CONFIG_EXPANSION)) /*TODO: implement tier*/
         || condition->MinExpansionLevel > sWorld->getIntConfig(CONFIG_EXPANSION)))
         return false;
 
