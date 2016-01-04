@@ -64,7 +64,6 @@ public:
     template<typename T>
     static bool HandleTicketGetByIdCommand(ChatHandler* handler, char const* args);
 
-	template<typename T>
 	static bool HandleTicketCreateCommand(ChatHandler* handler, char const* args);
 
     static bool HandleTicketResetAllCommand(ChatHandler* handler, char const* /*args*/)
@@ -76,7 +75,8 @@ public:
         }
         else
         {
-            sSupportMgr->ResetTickets<BugTicket>();
+			sSupportMgr->ResetTickets<Ticket>();
+			sSupportMgr->ResetTickets<BugTicket>();
             sSupportMgr->ResetTickets<ComplaintTicket>();
             sSupportMgr->ResetTickets<SuggestionTicket>();
             handler->SendSysMessage(LANG_COMMAND_TICKETRESET);
@@ -367,7 +367,6 @@ bool ticket_commandscript::HandleTicketGetByIdCommand(ChatHandler* handler, char
     return true;
 }
 
-template<typename T>
 bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char const* args)
 {
 	if (!*args)
@@ -444,7 +443,7 @@ std::vector<ChatCommand> ticket_commandscript::GetCommands() const
 		{ "list",			rbac::RBAC_PERM_COMMAND_TICKET_LIST,			true, &HandleTicketListCommand<Ticket>,          "" },
 		{ "unassign",		rbac::RBAC_PERM_COMMAND_TICKET_UNASSIGN,		true, &HandleTicketUnAssignCommand<Ticket>,      "" },
 		{ "view",			rbac::RBAC_PERM_COMMAND_TICKET_VIEW,			true, &HandleTicketGetByIdCommand<Ticket>,       "" },
-		{ "create",			rbac::RBAC_PERM_COMMAND_TICKET_CREATE,			true, &HandleTicketCreateCommand<Ticket>,      "" },
+		{ "create",			rbac::RBAC_PERM_COMMAND_TICKET_CREATE,			true, &HandleTicketCreateCommand,				 "" },
 		{ "bug",            rbac::RBAC_PERM_COMMAND_TICKET_BUG,             true, NULL, "", ticketBugCommandTable },
         { "complaint",      rbac::RBAC_PERM_COMMAND_TICKET_COMPLAINT,       true, NULL,              "", ticketComplaintCommandTable },
         { "reset",          rbac::RBAC_PERM_COMMAND_TICKET_RESET,           true, NULL,                  "", ticketResetCommandTable },
