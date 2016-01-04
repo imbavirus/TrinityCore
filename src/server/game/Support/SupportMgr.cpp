@@ -666,7 +666,7 @@ void SupportMgr::LoadTickets()
 	do
 	{
 		Field* fields = result->Fetch();
-		Ticket* ticket;
+		Ticket* ticket = nullptr;
 		ticket->LoadFromDB(fields);
 
 		if (!ticket->IsClosed())
