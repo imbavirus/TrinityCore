@@ -389,6 +389,7 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 	ticket->SetNote(note);
 
 	sSupportMgr->AddTicket(ticket);
+	return true;
 }
 
 std::vector<ChatCommand> ticket_commandscript::GetCommands() const
