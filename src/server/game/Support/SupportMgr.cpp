@@ -825,6 +825,20 @@ void SupportMgr::ResetTickets<BugTicket>()
 }
 
 template<>
+void SupportMgr::ResetTickets<Ticket>()
+{
+	for (auto const& c : _TicketList)
+		delete c.second;
+	_TicketList.clear();
+
+	_lastTicketId = 0;
+
+	PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_ALL_GM_TICKET);
+	CharacterDatabase.Execute(stmt);
+}
+
+
+template<>
 void SupportMgr::ResetTickets<ComplaintTicket>()
 {
     for (auto const& c : _complaintTicketList)

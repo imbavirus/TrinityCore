@@ -430,8 +430,9 @@ std::vector<ChatCommand> ticket_commandscript::GetCommands() const
     {
         { "all",        rbac::RBAC_PERM_COMMAND_TICKET_RESET_ALL,           true, &HandleTicketResetAllCommand,                 "" },
         { "bug",        rbac::RBAC_PERM_COMMAND_TICKET_RESET_BUG,           true, &HandleTicketResetCommand<BugTicket>,         "" },
-        { "complaint",  rbac::RBAC_PERM_COMMAND_TICKET_RESET_COMPLAINT,     true, &HandleTicketResetCommand<ComplaintTicket>,   "" },
-        { "suggestion", rbac::RBAC_PERM_COMMAND_TICKET_RESET_SUGGESTION,    true, &HandleTicketResetCommand<SuggestionTicket>,  "" },
+		{ "complaint",  rbac::RBAC_PERM_COMMAND_TICKET_RESET_COMPLAINT,     true, &HandleTicketResetCommand<ComplaintTicket>,   "" },
+		{ "ticket",		rbac::RBAC_PERM_COMMAND_TICKET_RESET_TICKET,		true, &HandleTicketResetCommand<Ticket>,			"" },
+		{ "suggestion", rbac::RBAC_PERM_COMMAND_TICKET_RESET_SUGGESTION,    true, &HandleTicketResetCommand<SuggestionTicket>,  "" },
     };
     static std::vector<ChatCommand> ticketCommandTable =
     {
