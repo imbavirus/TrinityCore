@@ -379,9 +379,9 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 
 	if (!sSupportMgr->GetTicketSystemStatus())
 		return false;
-
-	Player* plr = GetPlayer();
-	Ticket* ticket;
+	
+	Player* plr = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
+	Ticket* ticket = nullptr;
 	G3D::Vector3 position;
 	position = G3D::Vector3(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
 	ticket->SetPosition(plr->GetMapId(), position);
@@ -389,6 +389,7 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 	ticket->SetNote(note);
 
 	sSupportMgr->AddTicket(ticket);
+	return true;
 }
 
 std::vector<ChatCommand> ticket_commandscript::GetCommands() const

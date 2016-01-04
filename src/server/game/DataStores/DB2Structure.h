@@ -1054,10 +1054,10 @@ struct PlayerConditionEntry
     uint32 QuestKillID;                                             // 112
     uint32 QuestKillLogic;                                          // 113
     uint32 QuestKillMonster[4];                                     // 114-117
-    int32 MinExpansionLevel;                                        // 118
-    int32 MaxExpansionLevel;                                        // 119
-    int32 MinExpansionTier;                                         // 120
-    int32 MaxExpansionTier;                                         // 121
+    uint32 MinExpansionLevel;                                        // 118
+    uint32 MaxExpansionLevel;                                        // 119
+    uint32 MinExpansionTier;                                         // 120
+    uint32 MaxExpansionTier;                                         // 121
     uint32 MinGuildLevel;                                           // 122
     uint32 MaxGuildLevel;                                           // 123
     uint32 PhaseUseFlags;                                           // 124
