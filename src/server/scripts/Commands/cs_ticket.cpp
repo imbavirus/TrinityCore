@@ -401,7 +401,7 @@ bool ticket_commandscript::HandleTicketModifyCommand(ChatHandler* handler, char 
 	handler->PSendSysMessage("Ticket Updated: %s", note);
 	handler->SendSysMessage(" ");
 	handler->SendSysMessage("A GameMaster will contact you shortly.");
-
+	return true;
 	
 }
 bool ticket_commandscript::HandleTicketShowCommand(ChatHandler* handler, char const* /*args*/)
