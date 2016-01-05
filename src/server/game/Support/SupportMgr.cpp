@@ -332,7 +332,8 @@ void Ticket::LoadFromDB(Field* fields)
 	_id = fields[idx].GetUInt32();
 	_playerGuid = ObjectGuid::Create<HighGuid::Player>(fields[++idx].GetUInt64());
 	_note = fields[++idx].GetString();
-	_createTime = fields[++idx].GetUInt32();
+	_createTime = fields[++idx].GetUInt64();
+	_modifiedTime = fields[++idx].GetUInt64();
 	_mapId = fields[++idx].GetUInt16();
 	_pos.x = fields[++idx].GetFloat();
 	_pos.y = fields[++idx].GetFloat();
@@ -384,6 +385,7 @@ std::string Ticket::FormatViewMessageString(ChatHandler& handler, bool detailed)
 	ss << handler.PGetParseString(LANG_COMMAND_TICKETLISTGUID, _id);
 	ss << handler.PGetParseString(LANG_COMMAND_TICKETLISTNAME, GetPlayerName().c_str());
 	ss << handler.PGetParseString(LANG_COMMAND_TICKETLISTAGECREATE, (secsToTimeString(curTime - _createTime, true, false)).c_str());
+	ss << handler.PGetParseString(LANG_COMMAND_TICKETMODIFIED, (secsToTimeString(curTime - _modifiedTime, true, false)).c_str());
 
 	if (!_assignedTo.IsEmpty())
 		ss << handler.PGetParseString(LANG_COMMAND_TICKETLISTASSIGNEDTO, GetAssignedToName().c_str());

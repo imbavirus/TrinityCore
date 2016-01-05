@@ -117,6 +117,8 @@ enum RBACPermissions
     RBAC_PERM_COMMAND_TICKET_VIEW							 = 65,
     RBAC_PERM_COMMAND_TICKET_CREATE							 = 66,
 	RBAC_PERM_COMMAND_TICKET_RESET_TICKET					 = 67,
+    RBAC_PERM_COMMAND_TICKET_SHOW							 = 68,
+    RBAC_PERM_COMMAND_TICKET_MODIFY							 = 69,
     
     // Free space for core permissions (till 149)
     // Roles (Permissions with delegated permissions) use 199 and descending

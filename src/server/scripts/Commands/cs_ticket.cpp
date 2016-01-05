@@ -65,6 +65,8 @@ public:
     static bool HandleTicketGetByIdCommand(ChatHandler* handler, char const* args);
 
 	static bool HandleTicketCreateCommand(ChatHandler* handler, char const* args);
+	static bool HandleTicketShowCommand(ChatHandler* handler, char const* args);
+	static bool HandleTicketModifyCommand(ChatHandler* handler, char const* args);
 
     static bool HandleTicketResetAllCommand(ChatHandler* handler, char const* /*args*/)
     {
@@ -366,6 +368,60 @@ bool ticket_commandscript::HandleTicketGetByIdCommand(ChatHandler* handler, char
     handler->SendSysMessage(ticket->FormatViewMessageString(*handler, true).c_str());
     return true;
 }
+bool ticket_commandscript::HandleTicketModifyCommand(ChatHandler* handler, char const* args)
+{
+	if (!*args)
+		return false;
+
+	char* note = strtok((char*)args, "\n");
+	if (!note)
+	{
+		handler->SendSysMessage("Incorrect Syntax, please include a message.");
+		return false;
+	}
+	
+	if (!sSupportMgr->GetTicketSystemStatus())
+		return false;
+
+	Player* plr = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
+	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
+	abc->setString(0, plr->GetGUID().ToString());
+	PreparedQueryResult result = CharacterDatabase.Query(abc);
+	if (!result)
+	{
+		handler->SendSysMessage("You don't have a ticket currently open. Feel free to open one using \".ticket create $message\"");
+		return false;
+	}
+	PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_GM_TICKET);
+	stmt->setString(0, note);
+	stmt->setUInt64(1, uint64(time(nullptr)));
+	stmt->setString(2, plr->GetGUID().ToString());
+	CharacterDatabase.Execute(stmt);
+
+	handler->PSendSysMessage("Ticket Updated: %s", note);
+	handler->SendSysMessage(" ");
+	handler->SendSysMessage("A GameMaster will contact you shortly.");
+
+	
+}
+bool ticket_commandscript::HandleTicketShowCommand(ChatHandler* handler, char const* /*args*/)
+{
+	if (!sSupportMgr->GetTicketSystemStatus())
+		return false;
+
+	Player* plr = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
+	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
+	abc->setString(0, plr->GetGUID().ToString());
+	PreparedQueryResult result = CharacterDatabase.Query(abc);
+	if (!result)
+	{
+		handler->SendSysMessage("You don't have a ticket currently open. Feel free to open one using \".ticket create $message\"");
+		return false;
+	}
+	handler->SendSysMessage("Your Current Ticket: ");
+	handler->PSendSysMessage("%s", result->Fetch()->GetString());
+	return true;
+}
 
 bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char const* args)
 {
@@ -374,12 +430,23 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 
 	char* note = strtok((char*)args, "\n");
 	if (!note)
+	{
+		handler->SendSysMessage("Incorrect Syntax, please include a message.");
 		return false;
+	}
 
 	if (!sSupportMgr->GetTicketSystemStatus())
 		return false;
 	
 	Player* plr = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
+	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
+	abc->setString(0, plr->GetGUID().ToString());
+	PreparedQueryResult resulta = CharacterDatabase.Query(abc);
+	if (resulta)
+	{
+		handler->SendSysMessage("You already have an existing ticket, please use \".ticket modify $message\" in order to modify your ticket or \".ticket show\" in order to see the contents of your current ticket.");
+		return false;
+	}
 	Ticket* ticket = new Ticket();
 	G3D::Vector3 position;
 	position = G3D::Vector3(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
@@ -387,6 +454,8 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 	ticket->SetFacing(plr->GetOrientation());
 	ticket->SetNote(note);
 	ticket->SetPlayerGuid(plr->GetGUID());
+	ticket->SetCreateTime(uint64(time(nullptr)));
+	ticket->SetModifiedTime(uint64(time(nullptr)));
 	PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_MAX);
 	PreparedQueryResult result = CharacterDatabase.Query(stmt);
 	if (!result)
@@ -397,6 +466,9 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 	
 	ticket->SetId(fields->GetUInt32() + 1);
 	sSupportMgr->AddTicket(ticket);
+	handler->PSendSysMessage("Ticket Created: %s", note);
+	handler->SendSysMessage(" ");
+	handler->SendSysMessage("A GameMaster will contact you shortly.");
 	return true;
 }
 
@@ -454,6 +526,8 @@ std::vector<ChatCommand> ticket_commandscript::GetCommands() const
 		{ "unassign",		rbac::RBAC_PERM_COMMAND_TICKET_UNASSIGN,		true, &HandleTicketUnAssignCommand<Ticket>,      "" },
 		{ "view",			rbac::RBAC_PERM_COMMAND_TICKET_VIEW,			true, &HandleTicketGetByIdCommand<Ticket>,       "" },
 		{ "create",			rbac::RBAC_PERM_COMMAND_TICKET_CREATE,			true, &HandleTicketCreateCommand,				 "" },
+		{ "modify",			rbac::RBAC_PERM_COMMAND_TICKET_MODIFY,			true, &HandleTicketShowCommand,				 "" },
+		{ "show",			rbac::RBAC_PERM_COMMAND_TICKET_SHOW,			true, &HandleTicketModifyCommand,				 "" },
 		{ "bug",            rbac::RBAC_PERM_COMMAND_TICKET_BUG,             true, NULL, "", ticketBugCommandTable },
         { "complaint",      rbac::RBAC_PERM_COMMAND_TICKET_COMPLAINT,       true, NULL,              "", ticketComplaintCommandTable },
         { "reset",          rbac::RBAC_PERM_COMMAND_TICKET_RESET,           true, NULL,                  "", ticketResetCommandTable },

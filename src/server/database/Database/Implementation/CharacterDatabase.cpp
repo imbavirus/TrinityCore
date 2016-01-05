@@ -376,9 +376,11 @@ void CharacterDatabaseConnection::DoPrepareStatements()
     PrepareStatement(CHAR_DEL_ALL_GM_COMPLAINT_CHATLOGS, "TRUNCATE TABLE gm_complaint_chatlog", CONNECTION_ASYNC);
 	
 	// GM Tickets
-	PrepareStatement(CHAR_SEL_GM_TICKETS, "SELECT id, playerGuid, note, createTime, mapId, posX, posY, posZ, facing, closedBy, assignedTo, comment FROM gm_ticket", CONNECTION_SYNCH);
+	PrepareStatement(CHAR_SEL_GM_TICKETS, "SELECT id, playerGuid, note, createTime, modifyTime, mapId, posX, posY, posZ, facing, closedBy, assignedTo, comment FROM gm_ticket", CONNECTION_SYNCH);
+	PrepareStatement(CHAR_SEL_GM_TICKET_EXISTING, "SELECT note FROM gm_ticket where closedBy = 0 and playerGuid = ?", CONNECTION_SYNCH);
 	PrepareStatement(CHAR_SEL_GM_TICKET_MAX, "SELECT MAX(id) FROM gm_ticket", CONNECTION_SYNCH);
-	PrepareStatement(CHAR_REP_GM_TICKET, "REPLACE INTO gm_ticket (id, playerGuid, note, createTime, mapId, posX, posY, posZ, facing, closedBy, assignedTo, comment) VALUES (?, ?, ?, UNIX_TIMESTAMP(NOW()), ?, ?, ?, ?, ?, ? ,? ,?)", CONNECTION_ASYNC);
+	PrepareStatement(CHAR_UPD_GM_TICKET, "UPDATE gm_ticket SET note=? and modifyTime=? where playerGuid=? and closedBy=0", CONNECTION_ASYNC);
+	PrepareStatement(CHAR_REP_GM_TICKET, "REPLACE INTO gm_ticket (id, playerGuid, note, createTime, modifyTime, mapId, posX, posY, posZ, facing, closedBy, assignedTo, comment) VALUES (?, ?, ?, UNIX_TIMESTAMP(NOW()), UNIX_TIMESTAMP(NOW()), ?, ?, ?, ?, ?, ? ,? ,?)", CONNECTION_ASYNC);
 	PrepareStatement(CHAR_DEL_GM_TICKET, "DELETE FROM gm_ticket WHERE id = ?", CONNECTION_ASYNC);
 	PrepareStatement(CHAR_DEL_ALL_GM_TICKET, "TRUNCATE TABLE gm_ticket", CONNECTION_ASYNC);
 

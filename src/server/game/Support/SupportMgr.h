@@ -86,7 +86,9 @@ public:
     virtual void SetAssignedTo(ObjectGuid guid, bool /*isAdmin*/ = false) { _assignedTo = guid; }
     virtual void SetUnassigned() { _assignedTo.Clear(); }
     void SetClosedBy(ObjectGuid value) { _closedBy = value; }
-    void SetComment(std::string const& comment) { _comment = comment; }
+	void SetCreateTime(uint64 time) { _createTime = time; }
+	void SetModifiedTime(uint64 time) { _modifiedTime = time; }
+	void SetComment(std::string const& comment) { _comment = comment; }
     void SetPosition(uint32 mapId, G3D::Vector3& pos)
     {
         _mapId = mapId;
@@ -108,8 +110,9 @@ protected:
     ObjectGuid _playerGuid;
     uint16 _mapId;
     G3D::Vector3 _pos;
-    uint64 _createTime;
-    ObjectGuid _closedBy; // 0 = Open, -1 = Console, playerGuid = player abandoned ticket, other = GM who closed it.
+	uint64 _createTime;
+	uint64 _modifiedTime;
+	ObjectGuid _closedBy; // 0 = Open, -1 = Console, playerGuid = player abandoned ticket, other = GM who closed it.
     ObjectGuid _assignedTo;
     std::string _comment;
 	std::string _note;

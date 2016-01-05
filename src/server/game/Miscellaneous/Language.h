@@ -1060,7 +1060,7 @@ enum TrinityStrings
     LANG_COMMAND_TICKETLISTAGECREATE    = 2025,
     LANG_COMMAND_TICKETPENDING          = 2027,
     LANG_COMMAND_TICKETRESET            = 2028,
-
+	LANG_COMMAND_TICKETMODIFIED			= 2029,
     // Trinity strings                    5000-9999
     LANG_COMMAND_FREEZE                 = 5000,
     LANG_COMMAND_FREEZE_ERROR           = 5001,
