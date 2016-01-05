@@ -91,14 +91,14 @@ public:
         _pos = pos;
     }
 
-    virtual void LoadFromDB(Field* fields) = 0;
-    virtual void SaveToDB() const = 0;
-    virtual void DeleteFromDB() = 0;
+    void LoadFromDB(Field* fields);
+    void SaveToDB() const;
+    void DeleteFromDB();
 
     void TeleportTo(Player* player) const;
 
-    virtual std::string FormatViewMessageString(ChatHandler& handler, bool detailed = false) const = 0;
-    virtual std::string FormatViewMessageString(ChatHandler& handler, const char* szClosedName, const char* szAssignedToName, const char* szUnassignedName, const char* szDeletedName) const;
+    std::string FormatViewMessageString(ChatHandler& handler, bool detailed = false) const;
+    std::string FormatViewMessageString(ChatHandler& handler, const char* szClosedName, const char* szAssignedToName, const char* szUnassignedName, const char* szDeletedName) const;
 
 protected:
     uint32 _id;
@@ -125,12 +125,12 @@ public:
     void SetFacing(float facing) { _facing = facing; }
     void SetNote(std::string const& note) { _note = note; }
 
-    void LoadFromDB(Field* fields) override;
-    void SaveToDB() const override;
-    void DeleteFromDB() override;
+    void LoadFromDB(Field* fields);
+    void SaveToDB() const;
+    void DeleteFromDB();
 
     using Ticket::FormatViewMessageString;
-    std::string FormatViewMessageString(ChatHandler& handler, bool detailed = false) const override;
+    std::string FormatViewMessageString(ChatHandler& handler, bool detailed = false) const;
 
 private:
     float _facing;
@@ -157,13 +157,13 @@ public:
     void SetChatLog(ChatLog const& log) { _chatLog = log; }
     void SetNote(std::string const& note) { _note = note; }
 
-    void LoadFromDB(Field* fields) override;
+    void LoadFromDB(Field* fields);
     void LoadChatLineFromDB(Field* fields);
-    void SaveToDB() const override;
-    void DeleteFromDB() override;
+    void SaveToDB() const;
+    void DeleteFromDB();
 
     using Ticket::FormatViewMessageString;
-    std::string FormatViewMessageString(ChatHandler& handler, bool detailed = false) const override;
+    std::string FormatViewMessageString(ChatHandler& handler, bool detailed = false) const;
 
 private:
     float _facing;
@@ -185,12 +185,12 @@ public:
 
     void SetFacing(float facing) { _facing = facing; }
 
-    void LoadFromDB(Field* fields) override;
-    void SaveToDB() const override;
-    void DeleteFromDB() override;
+    void LoadFromDB(Field* fields);
+    void SaveToDB() const;
+    void DeleteFromDB();
 
     using Ticket::FormatViewMessageString;
-    std::string FormatViewMessageString(ChatHandler& handler, bool detailed = false) const override;
+    std::string FormatViewMessageString(ChatHandler& handler, bool detailed = false) const;
 
 private:
     float _facing;
