@@ -377,7 +377,7 @@ bool ticket_commandscript::HandleTicketModifyCommand(ChatHandler* handler, char 
 	if (!note)
 	{
 		handler->SendSysMessage("Incorrect Syntax, please include a message.");
-		return false;
+		return true;
 	}
 	
 	if (!sSupportMgr->GetTicketSystemStatus())
@@ -387,10 +387,10 @@ bool ticket_commandscript::HandleTicketModifyCommand(ChatHandler* handler, char 
 	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
 	abc->setString(0, plr->GetGUID().ToString());
 	PreparedQueryResult result = CharacterDatabase.Query(abc);
-	if (!result)
+	if (result->GetRowCount() == 0)
 	{
 		handler->SendSysMessage("You don't have a ticket currently open. Feel free to open one using \".ticket create $message\"");
-		return false;
+		return true;
 	}
 	PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_GM_TICKET);
 	stmt->setString(0, note);
@@ -413,10 +413,10 @@ bool ticket_commandscript::HandleTicketShowCommand(ChatHandler* handler, char co
 	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
 	abc->setString(0, plr->GetGUID().ToString());
 	PreparedQueryResult result = CharacterDatabase.Query(abc);
-	if (!result)
+	if (result->GetRowCount() == 0)
 	{
 		handler->SendSysMessage("You don't have a ticket currently open. Feel free to open one using \".ticket create $message\"");
-		return false;
+		return true;
 	}
 	handler->SendSysMessage("Your Current Ticket: ");
 	handler->PSendSysMessage("%s", result->Fetch()->GetString());
@@ -432,7 +432,7 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 	if (!note)
 	{
 		handler->SendSysMessage("Incorrect Syntax, please include a message.");
-		return false;
+		return true;
 	}
 
 	if (!sSupportMgr->GetTicketSystemStatus())
@@ -442,10 +442,10 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
 	abc->setString(0, plr->GetGUID().ToString());
 	PreparedQueryResult resulta = CharacterDatabase.Query(abc);
-	if (resulta)
+	if (resulta->GetRowCount() > 0)
 	{
 		handler->SendSysMessage("You already have an existing ticket, please use \".ticket modify $message\" in order to modify your ticket or \".ticket show\" in order to see the contents of your current ticket.");
-		return false;
+		return true;
 	}
 	Ticket* ticket = new Ticket();
 	G3D::Vector3 position;
