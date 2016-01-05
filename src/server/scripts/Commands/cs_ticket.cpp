@@ -387,7 +387,7 @@ bool ticket_commandscript::HandleTicketModifyCommand(ChatHandler* handler, char 
 	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
 	abc->setUInt64(0, plr->GetGUID().GetCounter());
 	PreparedQueryResult result = CharacterDatabase.Query(abc);
-	if (result->GetRowCount() == 0)
+	if (!result)
 	{
 		handler->SendSysMessage("You don't have a ticket currently open. Feel free to open one using \".ticket create $message\"");
 		return true;
@@ -413,7 +413,7 @@ bool ticket_commandscript::HandleTicketShowCommand(ChatHandler* handler, char co
 	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
 	abc->setUInt64(0, plr->GetGUID().GetCounter());
 	PreparedQueryResult result = CharacterDatabase.Query(abc);
-	if (result->GetRowCount() == 0)
+	if (!result)
 	{
 		handler->SendSysMessage("You don't have a ticket currently open. Feel free to open one using \".ticket create $message\"");
 		return true;
@@ -442,9 +442,12 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
 	abc->setUInt64(0, plr->GetGUID().GetCounter());
 	PreparedQueryResult resulta = CharacterDatabase.Query(abc);
-	if (resulta->GetRowCount() > 0)
+	if (resulta)
 	{
-		handler->SendSysMessage("You already have an existing ticket, please use \".ticket modify $message\" in order to modify your ticket or \".ticket show\" in order to see the contents of your current ticket.");
+		if (resulta->GetRowCount() > 0)
+		{
+			handler->SendSysMessage("You already have an existing ticket, please use \".ticket modify $message\" in order to modify your ticket or \".ticket show\" in order to see the contents of your current ticket.");
+		}
 		return true;
 	}
 	Ticket* ticket = new Ticket();
