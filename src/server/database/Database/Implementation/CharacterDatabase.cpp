@@ -377,6 +377,7 @@ void CharacterDatabaseConnection::DoPrepareStatements()
 	
 	// GM Tickets
 	PrepareStatement(CHAR_SEL_GM_TICKETS, "SELECT id, playerGuid, note, createTime, mapId, posX, posY, posZ, facing, closedBy, assignedTo, comment FROM gm_ticket", CONNECTION_SYNCH);
+	PrepareStatement(CHAR_SEL_GM_TICKET_MAX, "SELECT MAX(id) FROM gm_ticket", CONNECTION_SYNCH);
 	PrepareStatement(CHAR_REP_GM_TICKET, "REPLACE INTO gm_ticket (id, playerGuid, note, createTime, mapId, posX, posY, posZ, facing, closedBy, assignedTo, comment) VALUES (?, ?, ?, UNIX_TIMESTAMP(NOW()), ?, ?, ?, ?, ?, ? ,? ,?)", CONNECTION_ASYNC);
 	PrepareStatement(CHAR_DEL_GM_TICKET, "DELETE FROM gm_ticket WHERE id = ?", CONNECTION_ASYNC);
 	PrepareStatement(CHAR_DEL_ALL_GM_TICKET, "TRUNCATE TABLE gm_ticket", CONNECTION_ASYNC);

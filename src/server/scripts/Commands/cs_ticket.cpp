@@ -387,8 +387,15 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 	ticket->SetFacing(plr->GetOrientation());
 	ticket->SetNote(note);
 	ticket->SetPlayerGuid(plr->GetGUID());
+	PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_MAX);
+	PreparedQueryResult result = CharacterDatabase.Query(stmt);
+	if (!result)
+	{
+		return false;
+	}
+	Field* fields = result->Fetch();
 	
-	//ticket->SetId(1);
+	ticket->SetId(fields->GetUInt32() + 1);
 	sSupportMgr->AddTicket(ticket);
 	return true;
 }
