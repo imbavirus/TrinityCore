@@ -425,7 +425,7 @@ public:
 
 		char* id = handler->extractKeyFromLink((char*)args, "Harea");
 		if (!id)
-			return NULL;
+			return false;
 
 
         int32 areaTriggerId = atoi(id);
