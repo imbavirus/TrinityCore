@@ -394,8 +394,8 @@ bool ticket_commandscript::HandleTicketModifyCommand(ChatHandler* handler, char 
 	}
 	PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_GM_TICKET);
 	stmt->setString(0, note);
-	stmt->setUInt64(1, uint64(time(nullptr)));
-	stmt->setUInt64(2, plr->GetGUID().GetCounter());
+	//stmt->setUInt64(1, uint64(time(nullptr)));
+	stmt->setUInt64(1, plr->GetGUID().GetCounter());
 	CharacterDatabase.Execute(stmt);
 
 	handler->PSendSysMessage("Ticket Updated: %s", note);
@@ -454,8 +454,8 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 	ticket->SetFacing(plr->GetOrientation());
 	ticket->SetNote(note);
 	ticket->SetPlayerGuid(plr->GetGUID());
-	ticket->SetCreateTime(uint64(time(nullptr)));
-	ticket->SetModifiedTime(uint64(time(nullptr)));
+	//ticket->SetCreateTime(uint64(time(nullptr)));
+	//ticket->SetModifiedTime(uint64(time(nullptr)));
 	PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_MAX);
 	PreparedQueryResult result = CharacterDatabase.Query(stmt);
 	if (!result)
