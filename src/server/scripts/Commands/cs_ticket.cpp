@@ -385,7 +385,7 @@ bool ticket_commandscript::HandleTicketModifyCommand(ChatHandler* handler, char 
 
 	Player* plr = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
 	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
-	abc->setString(0, plr->GetGUID().ToString());
+	abc->setUInt64(0, plr->GetGUID().GetCounter());
 	PreparedQueryResult result = CharacterDatabase.Query(abc);
 	if (result->GetRowCount() == 0)
 	{
@@ -395,7 +395,7 @@ bool ticket_commandscript::HandleTicketModifyCommand(ChatHandler* handler, char 
 	PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_GM_TICKET);
 	stmt->setString(0, note);
 	stmt->setUInt64(1, uint64(time(nullptr)));
-	stmt->setString(2, plr->GetGUID().ToString());
+	stmt->setUInt64(2, plr->GetGUID().GetCounter());
 	CharacterDatabase.Execute(stmt);
 
 	handler->PSendSysMessage("Ticket Updated: %s", note);
@@ -411,7 +411,7 @@ bool ticket_commandscript::HandleTicketShowCommand(ChatHandler* handler, char co
 
 	Player* plr = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
 	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
-	abc->setString(0, plr->GetGUID().ToString());
+	abc->setUInt64(0, plr->GetGUID().GetCounter());
 	PreparedQueryResult result = CharacterDatabase.Query(abc);
 	if (result->GetRowCount() == 0)
 	{
@@ -440,7 +440,7 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 	
 	Player* plr = handler->GetSession() ? handler->GetSession()->GetPlayer() : nullptr;
 	PreparedStatement* abc = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GM_TICKET_EXISTING);
-	abc->setString(0, plr->GetGUID().ToString());
+	abc->setUInt64(0, plr->GetGUID().GetCounter());
 	PreparedQueryResult resulta = CharacterDatabase.Query(abc);
 	if (resulta->GetRowCount() > 0)
 	{
