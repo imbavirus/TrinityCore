@@ -386,7 +386,9 @@ bool ticket_commandscript::HandleTicketCreateCommand(ChatHandler* handler, char 
 	ticket->SetPosition(plr->GetMapId(), position);
 	ticket->SetFacing(plr->GetOrientation());
 	ticket->SetNote(note);
-
+	ticket->SetPlayerGuid(plr->GetGUID());
+	
+	//ticket->SetId(1);
 	sSupportMgr->AddTicket(ticket);
 	return true;
 }

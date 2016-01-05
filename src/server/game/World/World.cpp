@@ -1889,7 +1889,7 @@ void World::SetInitialWorldSettings()
     sObjectMgr->LoadFactionChangeTitles();
 
 	TC_LOG_INFO("server.loading", "Loading GM tickets...");
-	//sSupportMgr->LoadTickets();
+	sSupportMgr->LoadTickets();
 
     TC_LOG_INFO("server.loading", "Loading GM bugs...");
     sSupportMgr->LoadBugTickets();

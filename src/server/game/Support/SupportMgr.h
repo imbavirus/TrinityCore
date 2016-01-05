@@ -57,6 +57,8 @@ public:
     bool IsAssignedNotTo(ObjectGuid guid) const { return IsAssigned() && !IsAssignedTo(guid); }
 	void SetFacing(float facing) { _facing = facing; }
 	void SetNote(std::string const& note) { _note = note; }
+	void SetPlayerGuid(ObjectGuid const& guid) { _playerGuid = guid; }
+	void SetId(uint32 const& id) { _id = id; }
 
     uint32 GetId() const { return _id; }
     ObjectGuid GetPlayerGuid() const { return _playerGuid; }
