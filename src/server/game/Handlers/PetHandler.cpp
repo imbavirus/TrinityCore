@@ -38,10 +38,9 @@
 #include "QueryPackets.h"
 #include "PetPackets.h"
 
-void WorldSession::HandleDismissCritter(WorldPacket& recvData)
+void WorldSession::HandleDismissCritter(WorldPackets::Pets::DismissCritter& packet)
 {
-    ObjectGuid guid;
-    recvData >> guid;
+    ObjectGuid guid = packet.CritterGUID;
 
     TC_LOG_DEBUG("network", "WORLD: Received CMSG_DISMISS_CRITTER for %s", guid.ToString().c_str());
 
@@ -614,8 +613,8 @@ void WorldSession::HandlePetAbandon(WorldPackets::Pets::PetAbandon& packet)
 void WorldSession::HandlePetSpellAutocastOpcode(WorldPackets::Pets::PetSpellAutocast& packet)
 {
     ObjectGuid guid = packet.PetGUID;
-    uint32 spellid = packet.SpellID;                                          //1 for on, 0 for off
-    bool autocast = packet.AutocastEnabled;
+    uint32 spellid = packet.SpellID;
+    bool autocast = packet.AutocastEnabled; //1 for on, 0 for off
 
     if (!_player->GetGuardianPet() && !_player->GetCharm())
         return;
@@ -727,7 +726,7 @@ void WorldSession::SendPetNameInvalid(uint32 error, const std::string& name, Dec
     WorldPackets::Pets::PetNameInvalid petNameInvalid;
     petNameInvalid.Result = error;
     petNameInvalid.RenameData.NewName = name;
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < MAX_DECLINED_NAME_CASES; i++)
         petNameInvalid.RenameData.DeclinedNames.name[i] = declinedName[i].name[i];
 
     SendPacket(petNameInvalid.Write());

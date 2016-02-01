@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "PetPackets.h"
 
 WorldPacket const* WorldPackets::Pets::PetSpells::Write()
@@ -36,7 +37,7 @@ WorldPacket const* WorldPackets::Pets::PetSpells::Write()
     for (uint32 action : Actions)
         _worldPacket << action;
 
-    for (PetSpellCooldown cooldown : Cooldowns)
+    for (PetSpellCooldown const& cooldown : Cooldowns)
     {
         _worldPacket << int32(cooldown.SpellID);
         _worldPacket << int32(cooldown.Duration);
@@ -44,21 +45,21 @@ WorldPacket const* WorldPackets::Pets::PetSpells::Write()
         _worldPacket << int16(cooldown.Category);
     }
 
-    for (PetSpellHistory history : SpellHistory)
+    for (PetSpellHistory const& history : SpellHistory)
     {
         _worldPacket << int32(history.CategoryID);
         _worldPacket << int32(history.RecoveryTime);
         _worldPacket << int8(history.ConsumedCharges);
     }
+
     return &_worldPacket;
 }
 
 WorldPacket const* WorldPackets::Pets::PetStableList::Write()
 {
     _worldPacket << StableMaster;
-
-    _worldPacket << Pets.size();
-    for (PetStableInfo pet : Pets)
+    _worldPacket << uint32(Pets.size());
+    for (PetStableInfo const& pet : Pets)
     {
         _worldPacket << int32(pet.PetSlot);
         _worldPacket << int32(pet.PetNumber);
@@ -70,6 +71,7 @@ WorldPacket const* WorldPackets::Pets::PetStableList::Write()
         _worldPacket << int8(pet.PetName.length());
         _worldPacket.WriteString(pet.PetName);
     }
+
     return &_worldPacket;
 }
 
@@ -97,13 +99,18 @@ WorldPacket const* WorldPackets::Pets::PetNameInvalid::Write()
     _worldPacket << uint8(RenameData.NewName.length());
 
     _worldPacket.WriteBit(RenameData.HasDeclinedNames);
+    _worldPacket.FlushBits();
+
     if (RenameData.HasDeclinedNames)
     {
-        for (int i = 0; i < MAX_DECLINED_NAME_CASES; i++)
+        for (int32 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
+        {
             _worldPacket.WriteBits(RenameData.DeclinedNames.name[i].length(), 7);
+            _worldPacket.FlushBits();
+        }
 
-        for (int i = 0; i < MAX_DECLINED_NAME_CASES; i++)
-            _worldPacket << RenameData.DeclinedNames.name[i];
+        for (int32 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
+\            _worldPacket << RenameData.DeclinedNames.name[i];
     }
 
     _worldPacket.WriteString(RenameData.NewName);
@@ -121,18 +128,12 @@ void WorldPackets::Pets::PetRename::Read()
     RenameData.HasDeclinedNames = _worldPacket.ReadBit();
     if (RenameData.HasDeclinedNames)
     {
-        int count[MAX_DECLINED_NAME_CASES];
-        for (int i = 0; i < MAX_DECLINED_NAME_CASES; i++)
-        {
+        int32 count[MAX_DECLINED_NAME_CASES];
+        for (int32 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
             count[i] = _worldPacket.ReadBits(7);
-            _worldPacket.FlushBits();
-        }
 
-        for (int i = 0; i < MAX_DECLINED_NAME_CASES; i++)
-        {
+        for (int32 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
             RenameData.DeclinedNames.name[i] = _worldPacket.ReadString(count[i]);
-            _worldPacket.FlushBits();
-        }
     }
 
     RenameData.NewName = _worldPacket.ReadString(nameLen);
@@ -170,7 +171,16 @@ void WorldPackets::Pets::PetSpellAutocast::Read()
 {
     _worldPacket >> PetGUID;
     AutocastEnabled = _worldPacket.ReadBit();
-    _worldPacket.FlushBits();
+    _worldPacket >> SpellID;
+}
 
+void WorldPackets::Pets::DismissCritter::Read()
+{
+    _worldPacket >> CritterGUID;
+}
+
+void WorldPackets::Pets::PetCancelAura::Read()
+{
+    _worldPacket >> PetGUID;
     _worldPacket >> SpellID;
 }

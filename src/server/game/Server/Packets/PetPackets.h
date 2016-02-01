@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -78,7 +78,7 @@ namespace WorldPackets
         class PetStableList final : public ServerPacket
         {
         public:
-            PetStableList() : ServerPacket(SMSG_PET_STABLE_LIST, 0) { }
+            PetStableList() : ServerPacket(SMSG_PET_STABLE_LIST, 18 + 2) { }
 
             WorldPacket const* Write() override;
 
@@ -119,7 +119,7 @@ namespace WorldPackets
         class PetNameInvalid final : public ServerPacket
         {
         public:
-            PetNameInvalid() : ServerPacket(SMSG_PET_NAME_INVALID, 0) { }
+            PetNameInvalid() : ServerPacket(SMSG_PET_NAME_INVALID, 18 + 4 + 2 + 1 + 5 * 2 + 2) { }
 
             WorldPacket const* Write() override;
 
@@ -194,6 +194,27 @@ namespace WorldPackets
 
             ObjectGuid PetGUID;
             bool AutocastEnabled = false;
+            int32 SpellID = 0;
+        };
+
+        class DismissCritter final : public ClientPacket
+        {
+        public:
+            DismissCritter(WorldPacket&& packet) : ClientPacket(CMSG_DISMISS_CRITTER, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid CritterGUID;
+        };
+
+        class PetCancelAura final : public ClientPacket
+        {
+        public:
+            PetCancelAura(WorldPacket&& packet) : ClientPacket(CMSG_PET_CANCEL_AURA, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid PetGUID;
             int32 SpellID = 0;
         };
 

@@ -520,7 +520,7 @@ void WorldSession::SendStablePetCallback(PreparedQueryResult result, ObjectGuid 
         stableEntry.CreatureID = pet->GetEntry();
         stableEntry.DisplayID = pet->GetDisplayId();
         stableEntry.ExperienceLevel = pet->getLevel();
-        stableEntry.PetFlags = 1; // 1 = current, 2/3 = in stable (any from 4, 5, ... create problems with proper show)
+        stableEntry.PetFlags = PET_STABLE_ACTIVE;
         stableEntry.PetName = pet->GetName();                                       
         ++petSlot;
 
@@ -539,7 +539,7 @@ void WorldSession::SendStablePetCallback(PreparedQueryResult result, ObjectGuid 
             stableEntry.CreatureID = fields[2].GetUInt32();         // creature entry
             stableEntry.DisplayID = fields[5].GetUInt32();          // creature displayid
             stableEntry.ExperienceLevel = fields[3].GetUInt16();    // level
-            stableEntry.PetFlags = 2;                               // 1 = current, 2/3 = in stable (any from 4, 5, ... create problems with proper show)
+            stableEntry.PetFlags = PET_STABLE_INACTIVE;
             stableEntry.PetName = fields[4].GetString();            // Name
 
             ++petSlot;
