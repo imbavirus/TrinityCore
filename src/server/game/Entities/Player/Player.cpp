@@ -22213,27 +22213,6 @@ Player* Player::GetSelectedPlayer() const
     return nullptr;
 }
 
-void Player::SendComboPoints()
-{
-    Unit* combotarget = ObjectAccessor::GetUnit(*this, m_comboTarget);
-    if (combotarget)
-    {
-		SetPower(POWER_COMBO_POINTS, m_comboPoints);
-		// Combo points are now a power
-        //WorldPacket data;
-        //if (m_mover != this)
-        //{
-        //    data.Initialize(SMSG_PET_UPDATE_COMBO_POINTS, m_mover->GetPackGUID().size()+combotarget->GetPackGUID().size()+1);
-        //    data << m_mover->GetPackGUID();
-        //}
-        //else
-        //    data.Initialize(SMSG_UPDATE_COMBO_POINTS, combotarget->GetPackGUID().size()+1);
-        //data << combotarget->GetPackGUID();
-        //data << uint8(m_comboPoints);
-        //GetSession()->SendPacket(&data);
-    }
-}
-
 void Player::AddComboPoints(int8 count, Spell* spell)
 {
     if (!count)
