@@ -110,7 +110,7 @@ WorldPacket const* WorldPackets::Pets::PetNameInvalid::Write()
         }
 
         for (int32 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
-\            _worldPacket << RenameData.DeclinedNames.name[i];
+            _worldPacket << RenameData.DeclinedNames.name[i];
     }
 
     _worldPacket.WriteString(RenameData.NewName);
