@@ -1220,35 +1220,33 @@ public:
                 {
                     float range = GetSpellInfo()->GetMaxRange(true, GetCaster()) * 1.5f;
 
-                    PathGenerator m_preGeneratedPath(GetCaster());
-                    m_preGeneratedPath.SetPathLengthLimit(range);
+                    PathGenerator generatedPath(GetCaster());
+                    generatedPath.SetPathLengthLimit(range);
 
-                    bool result = m_preGeneratedPath.CalculatePath(dest->GetPositionX(), dest->GetPositionY(), dest->GetPositionZ(), false, true);
-                    if (m_preGeneratedPath.GetPathType() & PATHFIND_SHORT)
+                    bool result = generatedPath.CalculatePath(dest->GetPositionX(), dest->GetPositionY(), dest->GetPositionZ(), false, true);
+                    if (generatedPath.GetPathType() & PATHFIND_SHORT)
                         return SPELL_FAILED_OUT_OF_RANGE;
-                    else if (!result || m_preGeneratedPath.GetPathType() & PATHFIND_NOPATH)
+                    else if (!result || generatedPath.GetPathType() & PATHFIND_NOPATH)
                     {
-                        result = m_preGeneratedPath.CalculatePath(dest->GetPositionX(), dest->GetPositionY(), dest->GetPositionZ(), false, false);
-                        if (m_preGeneratedPath.GetPathType() & PATHFIND_SHORT)
+                        result = generatedPath.CalculatePath(dest->GetPositionX(), dest->GetPositionY(), dest->GetPositionZ(), false, false);
+                        if (generatedPath.GetPathType() & PATHFIND_SHORT)
                             return SPELL_FAILED_OUT_OF_RANGE;
-                        else if (!result || m_preGeneratedPath.GetPathType() & PATHFIND_NOPATH)
+                        else if (!result || generatedPath.GetPathType() & PATHFIND_NOPATH)
                             return SPELL_FAILED_NOPATH;
                     }
                 }
                 else if (dest->GetPositionZ() > GetCaster()->GetPositionZ() + 4.0f)
                     return SPELL_FAILED_NOPATH;
-
+                return SPELL_CAST_OK;
             }
-            return SPELL_CAST_OK;
+
+            return SPELL_FAILED_NO_VALID_TARGETS;
         }
 
         void HandleDummy(SpellEffIndex /*effIndex*/)
         {
-            if (WorldLocation const* dest = GetExplTargetDest())
-            {
-                GetCaster()->GetSpellHistory()->ResetCooldown(SPELL_WARRIOR_HEROIC_LEAP_JUMP, false);
+            if (WorldLocation* dest = GetHitDest())
                 GetCaster()->CastSpell(dest->GetPositionX(), dest->GetPositionY(), dest->GetPositionZ(), SPELL_WARRIOR_HEROIC_LEAP_JUMP, true);
-            }
         }
 
         void Register() override
@@ -1276,8 +1274,7 @@ public:
 
         bool Validate(SpellInfo const* /*spellInfo*/) override
         {
-            if (!sSpellMgr->GetSpellInfo(SPELL_WARRIOR_HEROIC_LEAP_DAMAGE) ||
-                !sSpellMgr->GetSpellInfo(SPELL_WARRIOR_GLYPH_OF_HEROIC_LEAP) ||
+            if (!sSpellMgr->GetSpellInfo(SPELL_WARRIOR_GLYPH_OF_HEROIC_LEAP) ||
                 !sSpellMgr->GetSpellInfo(SPELL_WARRIOR_GLYPH_OF_HEROIC_LEAP_BUFF) ||
                 !sSpellMgr->GetSpellInfo(SPELL_WARRIOR_IMPROVED_HEROIC_LEAP) ||
                 !sSpellMgr->GetSpellInfo(SPELL_WARRIOR_TAUNT))
@@ -1287,14 +1284,10 @@ public:
 
         void AfterJump(SpellEffIndex /*effIndex*/)
         {
-            GetCaster()->CastSpell(GetCaster(), SPELL_WARRIOR_HEROIC_LEAP_DAMAGE, true);
-            if (Player* player = GetCaster()->ToPlayer())
-            {
-                if (player->HasAura(SPELL_WARRIOR_GLYPH_OF_HEROIC_LEAP))
-                    player->CastSpell(player, SPELL_WARRIOR_GLYPH_OF_HEROIC_LEAP_BUFF, true);
-                if (player->HasAura(SPELL_WARRIOR_IMPROVED_HEROIC_LEAP))
-                    player->GetSpellHistory()->ResetCooldown(SPELL_WARRIOR_TAUNT, true);
-            }
+            if (GetCaster()->HasAura(SPELL_WARRIOR_GLYPH_OF_HEROIC_LEAP))
+                GetCaster()->CastSpell(GetCaster(), SPELL_WARRIOR_GLYPH_OF_HEROIC_LEAP_BUFF, true);
+            if (GetCaster()->HasAura(SPELL_WARRIOR_IMPROVED_HEROIC_LEAP))
+                GetCaster()->GetSpellHistory()->ResetCooldown(SPELL_WARRIOR_TAUNT, true);
         }
 
         void Register() override

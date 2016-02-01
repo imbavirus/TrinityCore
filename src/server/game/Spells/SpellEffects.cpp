@@ -780,11 +780,6 @@ void Spell::EffectTriggerSpell(SpellEffIndex /*effIndex*/)
         values.AddSpellMod(SPELLVALUE_BASE_POINT2, damage);
     }
 
-    // Remove spell cooldown (not category) if spell triggering spell with cooldown and same category
-    if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->CategoryRecoveryTime && spellInfo->CategoryRecoveryTime
-        && m_spellInfo->GetCategory() == spellInfo->GetCategory())
-        m_caster->GetSpellHistory()->ResetCooldown(spellInfo->Id);
-
     // original caster guid only for GO cast
     m_caster->CastSpell(targets, spellInfo, &values, TRIGGERED_FULL_MASK, NULL, NULL, m_originalCasterGUID);
 }
@@ -832,11 +827,6 @@ void Spell::EffectTriggerMissileSpell(SpellEffIndex /*effIndex*/)
         values.AddSpellMod(SPELLVALUE_BASE_POINT1, damage);
         values.AddSpellMod(SPELLVALUE_BASE_POINT2, damage);
     }
-
-    // Remove spell cooldown (not category) if spell triggering spell with cooldown and same category
-    if (m_caster->GetTypeId() == TYPEID_PLAYER && m_spellInfo->CategoryRecoveryTime && spellInfo->CategoryRecoveryTime
-        && m_spellInfo->GetCategory() == spellInfo->GetCategory())
-        m_caster->GetSpellHistory()->ResetCooldown(spellInfo->Id);
 
     // original caster guid only for GO cast
     m_caster->CastSpell(targets, spellInfo, &values, TRIGGERED_FULL_MASK, NULL, NULL, m_originalCasterGUID);
@@ -934,7 +924,7 @@ void Spell::EffectJump(SpellEffIndex /*effIndex*/)
 
     float speedXY, speedZ;
     CalculateJumpSpeeds(effectInfo, m_caster->GetExactDist2d(x, y), speedXY, speedZ);
-    m_caster->GetMotionMaster()->MoveJump(x, y, z, speedXY, speedZ);
+    m_caster->GetMotionMaster()->MoveJump(x, y, z, speedXY, speedZ, EVENT_JUMP, effectInfo->TriggerSpell, unitTarget->GetGUID());
 }
 
 void Spell::EffectJumpDest(SpellEffIndex /*effIndex*/)
@@ -954,7 +944,7 @@ void Spell::EffectJumpDest(SpellEffIndex /*effIndex*/)
 
     float speedXY, speedZ;
     CalculateJumpSpeeds(effectInfo, m_caster->GetExactDist2d(x, y), speedXY, speedZ);
-    m_caster->GetMotionMaster()->MoveJump(x, y, z, speedXY, speedZ);
+    m_caster->GetMotionMaster()->MoveJump(x, y, z, speedXY, speedZ, EVENT_JUMP, effectInfo->TriggerSpell);
 }
 
 void Spell::CalculateJumpSpeeds(SpellEffectInfo const* effInfo, float dist, float& speedXY, float& speedZ)
@@ -3011,7 +3001,7 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
             if (m_spellInfo->SpellFamilyFlags[0] & 0x2000000)
             {
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
-                   // m_caster->ToPlayer()->AddComboPoints(unitTarget, 1, this);
+                    m_caster->ToPlayer()->AddComboPoints(1, this);
                 // 50% more damage with daggers
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
                     if (Item* item = m_caster->ToPlayer()->GetWeaponForAttack(m_attackType, true))
@@ -3034,7 +3024,7 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
             if (m_spellInfo->SpellFamilyFlags[1] & 0x400)
             {
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
-                    m_caster->ToPlayer()->AddComboPoints(unitTarget, 1, this);
+                    m_caster->ToPlayer()->AddComboPoints(1, this);
             }
             // Shred, Maul - Rend and Tear
             else if (m_spellInfo->SpellFamilyFlags[0] & 0x00008800 && unitTarget->HasAuraState(AURA_STATE_BLEEDING))
@@ -3861,8 +3851,7 @@ void Spell::EffectAddComboPoints(SpellEffIndex /*effIndex*/)
     if (damage <= 0)
         return;
 
-	//TC_LOG_INFO("server.loading", ">> MAX PROC combopoints3 AMOUNT TO: %u ", damage);
-    //m_caster->m_movedPlayer->AddComboPoints(unitTarget, damage, this);
+    m_caster->m_movedPlayer->AddComboPoints(damage, this);
 }
 
 void Spell::EffectDuel(SpellEffIndex effIndex)
@@ -4530,6 +4519,9 @@ void Spell::EffectCharge(SpellEffIndex /*effIndex*/)
         // not all charge effects used in negative spells
         if (!m_spellInfo->IsPositive() && m_caster->GetTypeId() == TYPEID_PLAYER)
             m_caster->Attack(unitTarget, true);
+
+        if (effectInfo->TriggerSpell)
+            m_caster->CastSpell(unitTarget, effectInfo->TriggerSpell, true, nullptr, nullptr, m_originalCasterGUID);
     }
 }
 
@@ -5422,7 +5414,7 @@ void Spell::EffectGameObjectDamage(SpellEffIndex /*effIndex*/)
     FactionTemplateEntry const* casterFaction = caster->GetFactionTemplateEntry();
     FactionTemplateEntry const* targetFaction = sFactionTemplateStore.LookupEntry(gameObjTarget->GetUInt32Value(GAMEOBJECT_FACTION));
     // Do not allow to damage GO's of friendly factions (ie: Wintergrasp Walls/Ulduar Storm Beacons)
-    if ((casterFaction && targetFaction && !casterFaction->IsFriendlyTo(*targetFaction)) || !targetFaction)
+    if (!targetFaction || (casterFaction && targetFaction && !casterFaction->IsFriendlyTo(*targetFaction)))
         gameObjTarget->ModifyHealth(-damage, caster, GetSpellInfo()->Id);
 }
 

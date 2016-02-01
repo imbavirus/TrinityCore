@@ -120,6 +120,7 @@ namespace WorldPackets
         class HearthAndResurrect;
         class PVPLogDataRequest;
         class BattlemasterJoin;
+        class BattlemasterJoinArena;
         class BattlefieldLeave;
         class BattlefieldPort;
         class BattlefieldListRequest;
@@ -361,6 +362,7 @@ namespace WorldPackets
         class CancelTempEnchantment;
         class TransmogrifyItems;
         class UseCritterItem;
+        class SocketGems;
     }
 
     namespace Loot
@@ -600,6 +602,7 @@ namespace WorldPackets
     {
         class SetSpecialization;
         class LearnTalents;
+        class ConfirmRespecWipe;
     }
 
     namespace Taxi
@@ -1392,7 +1395,7 @@ class WorldSession
         void HandleCancelAutoRepeatSpellOpcode(WorldPackets::Spells::CancelAutoRepeatSpell& cancelAutoRepeatSpell);
 
         void HandleLearnTalentsOpcode(WorldPackets::Talent::LearnTalents& packet);
-        void HandleConfirmRespecWipeOpcode(WorldPacket& recvPacket);
+        void HandleConfirmRespecWipeOpcode(WorldPackets::Talent::ConfirmRespecWipe& confirmRespecWipe);
         void HandleUnlearnSkillOpcode(WorldPackets::Spells::UnlearnSkill& packet);
         void HandleSetSpecializationOpcode(WorldPackets::Talent::SetSpecialization& packet);
 
@@ -1481,7 +1484,7 @@ class WorldSession
         void HandleBattleFieldPortOpcode(WorldPackets::Battleground::BattlefieldPort& battlefieldPort);
         void HandleBattlefieldListOpcode(WorldPackets::Battleground::BattlefieldListRequest& battlefieldList);
         void HandleBattlefieldLeaveOpcode(WorldPackets::Battleground::BattlefieldLeave& battlefieldLeave);
-        void HandleBattlemasterJoinArena(WorldPacket& recvData);
+        void HandleBattlemasterJoinArena(WorldPackets::Battleground::BattlemasterJoinArena& packet);
         void HandleReportPvPAFK(WorldPackets::Battleground::ReportPvPPlayerAFK& reportPvPPlayerAFK);
         void HandleRequestRatedBattlefieldInfo(WorldPacket& recvData);
         void HandleGetPVPOptionsEnabled(WorldPackets::Battleground::GetPVPOptionsEnabled& getPvPOptionsEnabled);
@@ -1508,7 +1511,6 @@ class WorldSession
         void HandleFarSightOpcode(WorldPackets::Misc::FarSight& packet);
         void HandleSetDungeonDifficultyOpcode(WorldPackets::Misc::SetDungeonDifficulty& setDungeonDifficulty);
         void HandleSetRaidDifficultyOpcode(WorldPackets::Misc::SetRaidDifficulty& setRaidDifficulty);
-        void HandleMoveSetCanFlyAckOpcode(WorldPacket& recvData);
         void HandleSetTitleOpcode(WorldPackets::Character::SetTitle& packet);
         void HandleTimeSyncResponse(WorldPackets::Misc::TimeSyncResponse& packet);
         void HandleWhoIsOpcode(WorldPackets::Who::WhoIsRequest& packet);
@@ -1548,7 +1550,7 @@ class WorldSession
         void HandleRequestPetInfoOpcode(WorldPacket& recvData);
 
         // Socket gem
-        void HandleSocketOpcode(WorldPacket& recvData);
+        void HandleSocketGems(WorldPackets::Item::SocketGems& socketGems);
 
         void HandleCancelTempEnchantmentOpcode(WorldPackets::Item::CancelTempEnchantment& cancelTempEnchantment);
 

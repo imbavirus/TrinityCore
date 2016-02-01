@@ -25,7 +25,6 @@
 #include "World.h"
 
 DB2Storage<AchievementEntry>                    sAchievementStore("Achievement.db2", AchievementFormat, HOTFIX_SEL_ACHIEVEMENT);
-DB2Storage<AreaGroupEntry>                      sAreaGroupStore("AreaGroup.db2", AreaGroupFormat, HOTFIX_SEL_AREA_GROUP);
 DB2Storage<AreaGroupMemberEntry>                sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberFormat, HOTFIX_SEL_AREA_GROUP_MEMBER);
 DB2Storage<AuctionHouseEntry>                   sAuctionHouseStore("AuctionHouse.db2", AuctionHouseFormat, HOTFIX_SEL_AUCTION_HOUSE);
 DB2Storage<BarberShopStyleEntry>                sBarberShopStyleStore("BarberShopStyle.db2", BarberShopStyleFormat, HOTFIX_SEL_BARBER_SHOP_STYLE);
@@ -159,7 +158,7 @@ inline void LoadDB2(uint32& availableDb2Locales, DB2StoreProblemList& errlist, D
 
         for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
         {
-            if (defaultLocale == i)
+            if (defaultLocale == i || i == LOCALE_none)
                 continue;
 
             if (availableDb2Locales & (1 << i))
@@ -201,7 +200,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
     LOAD_DB2(sAchievementStore);
     LOAD_DB2(sAreaGroupMemberStore);
-    LOAD_DB2(sAreaGroupStore);
     LOAD_DB2(sBattlePetBreedQualityStore);
     LOAD_DB2(sBattlePetBreedStateStore);
     LOAD_DB2(sAuctionHouseStore);
@@ -382,8 +380,15 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
         if (namesProfanity->Language != -1)
             _nameValidators[namesProfanity->Language].emplace_back(namesProfanity->Name, boost::regex::perl | boost::regex::icase | boost::regex::optimize);
         else
+        {
             for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
+            {
+                if (i == LOCALE_none)
+                    continue;
+
                 _nameValidators[i].emplace_back(namesProfanity->Name, boost::regex::perl | boost::regex::icase | boost::regex::optimize);
+            }
+        }
     }
 
     for (NamesReservedEntry const* namesReserved : sNamesReservedStore)
@@ -393,8 +398,13 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     {
         ASSERT(!(namesReserved->LocaleMask & ~((1 << TOTAL_LOCALES) - 1)));
         for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
+        {
+            if (i == LOCALE_none)
+                continue;
+
             if (namesReserved->LocaleMask & (1 << i))
                 _nameValidators[i].emplace_back(namesReserved->Name, boost::regex::perl | boost::regex::icase | boost::regex::optimize);
+        }
     }
 
     for (PhaseXPhaseGroupEntry const* group : sPhaseXPhaseGroupStore)
@@ -491,7 +501,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
         sTransportMgr->AddPathRotationToTransport(rot->TransportID, rot->TimeIndex, rot);
 
     for (ToyEntry const* toy : sToyStore)
-        _toys.push_back(toy->ItemID);
+        _toys.insert(toy->ItemID);
 
     for (HeirloomEntry const* heirloom : sHeirloomStore)
         _heirlooms[heirloom->ItemID] = heirloom;
@@ -638,6 +648,15 @@ uint32 DB2Manager::GetHeirloomItemLevel(uint32 curveId, uint32 level) const
             return uint32((previousItr->second->Y - it2->second->Y) / (previousItr->second->X - it2->second->X) * (float(level) - it2->second->X) + it2->second->Y);
 
     return uint32(previousItr->second->Y);  // Lowest scaling point
+}
+
+HeirloomEntry const* DB2Manager::GetHeirloomByItemId(uint32 itemId) const
+{
+    auto itr = _heirlooms.find(itemId);
+    if (itr != _heirlooms.end())
+        return itr->second;
+
+    return nullptr;
 }
 
 DB2Manager::ItemBonusList const* DB2Manager::GetItemBonusList(uint32 bonusListId) const
@@ -828,6 +847,11 @@ std::vector<SpellPowerEntry const*> DB2Manager::GetSpellPowers(uint32 spellId, D
     return powers;
 }
 
+bool DB2Manager::IsToyItem(uint32 toy) const
+{
+    return _toys.count(toy) > 0;
+}
+
 bool DB2Manager::ChrClassesXPowerTypesEntryComparator::Compare(ChrClassesXPowerTypesEntry const* left, ChrClassesXPowerTypesEntry const* right)
 {
     if (left->ClassID != right->ClassID)
@@ -847,18 +871,4 @@ bool DB2Manager::MountTypeXCapabilityEntryComparator::Compare(MountTypeXCapabili
     if (left->MountTypeID == right->MountTypeID)
         return left->OrderIndex < right->OrderIndex;
     return left->ID < right->ID;
-}
-
-bool DB2Manager::GetToyItemIdMatch(uint32 toy) const
-{
-    return std::find(_toys.begin(), _toys.end(), toy) != _toys.end();
-}
-
-HeirloomEntry const* DB2Manager::GetHeirloomByItemId(uint32 itemId) const
-{
-    auto itr = _heirlooms.find(itemId);
-    if (itr != _heirlooms.end())
-        return itr->second;
-
-    return nullptr;
 }
