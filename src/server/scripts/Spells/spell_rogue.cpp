@@ -682,7 +682,6 @@ class spell_rog_mutilate : public SpellScriptLoader
 			void AddCP(SpellEffIndex /*effIndex*/)
 			{
 				Player* Caster = GetCaster()->ToPlayer();
-				Unit* thetarget = GetHitUnit();
 				Caster->AddComboPoints(2);
 			}
 
@@ -711,7 +710,6 @@ public:
 		void AddCP(SpellEffIndex /*effIndex*/)
 		{
 			Player* Caster = GetCaster()->ToPlayer();
-			Unit* thetarget = GetHitUnit();
 			Caster->AddComboPoints(5);
 		}
 
@@ -740,7 +738,6 @@ public:
 		void AddCP(SpellEffIndex /*effIndex*/)
 		{
 			Player* Caster = GetCaster()->ToPlayer();
-			Unit* thetarget = GetHitUnit();
 			Caster->AddComboPoints(1);
 		}
 
@@ -769,7 +766,6 @@ public:
 		void AddCP(SpellEffIndex /*effIndex*/)
 		{
 			Player* Caster = GetCaster()->ToPlayer();
-			Unit* thetarget = GetHitUnit();
 			Caster->AddComboPoints(1);
 		}
 
@@ -798,7 +794,6 @@ public:
 		void AddCP(SpellEffIndex /*effIndex*/)
 		{
 			Player* Caster = GetCaster()->ToPlayer();
-			Unit* thetarget = GetHitUnit();
 			Caster->AddComboPoints(1);
 		}
 
@@ -827,7 +822,6 @@ public:
 		void AddCP(SpellEffIndex /*effIndex*/)
 		{
 			Player* Caster = GetCaster()->ToPlayer();
-			Unit* thetarget = GetHitUnit();
 			Caster->AddComboPoints(1);
 		}
 
@@ -857,7 +851,6 @@ public:
 		void AddCP(SpellEffIndex /*effIndex*/)
 		{
 			Player* Caster = GetCaster()->ToPlayer();
-			Unit* thetarget = GetHitUnit();
 			Caster->AddComboPoints(1);
 		}
 
