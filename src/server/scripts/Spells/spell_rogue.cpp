@@ -683,7 +683,7 @@ class spell_rog_mutilate : public SpellScriptLoader
 			{
 				Player* Caster = GetCaster()->ToPlayer();
 				Unit* thetarget = GetHitUnit();
-				Caster->AddComboPoints(thetarget,2);
+				Caster->AddComboPoints(2);
 			}
 
 			void Register() override
@@ -712,7 +712,7 @@ public:
 		{
 			Player* Caster = GetCaster()->ToPlayer();
 			Unit* thetarget = GetHitUnit();
-			Caster->AddComboPoints(thetarget, 5);
+			Caster->AddComboPoints(5);
 		}
 
 		void Register() override
@@ -741,7 +741,7 @@ public:
 		{
 			Player* Caster = GetCaster()->ToPlayer();
 			Unit* thetarget = GetHitUnit();
-			Caster->AddComboPoints(thetarget, 1);
+			Caster->AddComboPoints(1);
 		}
 
 		void Register() override
@@ -770,7 +770,7 @@ public:
 		{
 			Player* Caster = GetCaster()->ToPlayer();
 			Unit* thetarget = GetHitUnit();
-			Caster->AddComboPoints(thetarget, 1);
+			Caster->AddComboPoints(1);
 		}
 
 		void Register() override
@@ -799,7 +799,7 @@ public:
 		{
 			Player* Caster = GetCaster()->ToPlayer();
 			Unit* thetarget = GetHitUnit();
-			Caster->AddComboPoints(thetarget, 1);
+			Caster->AddComboPoints(1);
 		}
 
 		void Register() override
@@ -828,7 +828,7 @@ public:
 		{
 			Player* Caster = GetCaster()->ToPlayer();
 			Unit* thetarget = GetHitUnit();
-			Caster->AddComboPoints(thetarget, 1);
+			Caster->AddComboPoints(1);
 		}
 
 		void Register() override
@@ -858,7 +858,7 @@ public:
 		{
 			Player* Caster = GetCaster()->ToPlayer();
 			Unit* thetarget = GetHitUnit();
-			Caster->AddComboPoints(thetarget, 1);
+			Caster->AddComboPoints(1);
 		}
 
 		void Register() override
@@ -1189,7 +1189,7 @@ public:
 		{
 			if (Player* caster = GetCaster()->ToPlayer())
 			{
-				caster->AddComboPoints(caster, 1);
+				caster->AddComboPoints(1);
 			}
 		}
 
