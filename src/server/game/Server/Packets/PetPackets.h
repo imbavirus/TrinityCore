@@ -75,6 +75,14 @@ namespace WorldPackets
             std::string PetName;
         };
 
+        class RequestPetInfo final : public ClientPacket
+        {
+        public:
+            RequestPetInfo(WorldPacket&& packet) : ClientPacket(CMSG_REQUEST_PET_INFO, std::move(packet)) { }
+        
+            void Read() override { }
+        };
+
         class PetStableList final : public ServerPacket
         {
         public:
@@ -182,7 +190,7 @@ namespace WorldPackets
 
             void Read() override;
 
-            ObjectGuid PetGUID;
+            ObjectGuid Pet;
         };
 
         class PetSpellAutocast final : public ClientPacket
@@ -220,6 +228,5 @@ namespace WorldPackets
 
     }
 }
-
 
 #endif // PetPackets_h__

@@ -162,18 +162,6 @@ void WorldPackets::Pets::PetSetAction::Read()
     _worldPacket >> Action;
 }
 
-void WorldPackets::Pets::PetAbandon::Read()
-{
-    _worldPacket >> PetGUID;
-}
-
-void WorldPackets::Pets::PetSpellAutocast::Read()
-{
-    _worldPacket >> PetGUID;
-    AutocastEnabled = _worldPacket.ReadBit();
-    _worldPacket >> SpellID;
-}
-
 void WorldPackets::Pets::DismissCritter::Read()
 {
     _worldPacket >> CritterGUID;
@@ -183,4 +171,16 @@ void WorldPackets::Pets::PetCancelAura::Read()
 {
     _worldPacket >> PetGUID;
     _worldPacket >> SpellID;
+}
+
+void WorldPackets::Pets::PetAbandon::Read()
+{
+    _worldPacket >> Pet;
+}
+
+void WorldPackets::Pets::PetSpellAutocast::Read()
+{
+    _worldPacket >> PetGUID;
+    _worldPacket >> SpellID;
+    AutocastEnabled = _worldPacket.ReadBit();
 }
