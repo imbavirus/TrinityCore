@@ -39,7 +39,7 @@
 #include "QueryPackets.h"
 #include "PetPackets.h"
 
-void WorldSession::HandleDismissCritter(WorldPackets::Pet::DismissCritter& packet)
+void WorldSession::HandleDismissCritter(WorldPackets::Pets::DismissCritter& packet)
 {
     Unit* pet = ObjectAccessor::GetCreatureOrPetOrVehicle(*_player, packet.CritterGUID);
 
@@ -57,11 +57,11 @@ void WorldSession::HandleDismissCritter(WorldPackets::Pet::DismissCritter& packe
     }
 }
 
-void WorldSession::HandleRequestPetInfo(WorldPackets::Pet::RequestPetInfo& /*packet */)
+void WorldSession::HandleRequestPetInfo(WorldPackets::Pets::RequestPetInfo& /*packet */)
 {
 }
 
-void WorldSession::HandlePetAction(WorldPacket& recvData)
+void WorldSession::HandlePetAction(WorldPackets::Pets::ClientPetAction& packet)
 {
     ObjectGuid guid1 = packet.PetGUID;         //pet guid
     ObjectGuid guid2 = packet.TargetGUID;      //tag guid
@@ -112,7 +112,7 @@ void WorldSession::HandlePetAction(WorldPacket& recvData)
     }
 }
 
-void WorldSession::HandlePetStopAttack(WorldPackets::Pet::PetStopAttack& packet)
+void WorldSession::HandlePetStopAttack(WorldPackets::Pets::PetStopAttack& packet)
 {
     Unit* pet = ObjectAccessor::GetCreatureOrPetOrVehicle(*_player, packet.PetGUID);
 
@@ -588,7 +588,7 @@ void WorldSession::HandlePetRename(WorldPackets::Pets::PetRename& packet)
     pet->SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, uint32(time(NULL))); // cast can't be helped
 }
 
-void WorldSession::HandlePetAbandon(WorldPackets::Pet::PetAbandon& packet)
+void WorldSession::HandlePetAbandon(WorldPackets::Pets::PetAbandon& packet)
 {
     if (!_player->IsInWorld())
         return;
@@ -603,7 +603,7 @@ void WorldSession::HandlePetAbandon(WorldPackets::Pet::PetAbandon& packet)
     }
 }
 
-void WorldSession::HandlePetSpellAutocastOpcode(WorldPackets::Pet::PetSpellAutocast& packet)
+void WorldSession::HandlePetSpellAutocastOpcode(WorldPackets::Pets::PetSpellAutocast& packet)
 {
     Creature* pet = ObjectAccessor::GetCreatureOrPetOrVehicle(*_player, packet.PetGUID);
     if (!pet)
