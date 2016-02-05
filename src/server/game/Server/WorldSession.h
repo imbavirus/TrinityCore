@@ -632,6 +632,7 @@ namespace WorldPackets
         class SupportTicketSubmitSuggestion;
         class SupportTicketSubmitComplaint;
         class BugReport;
+        class Complaint;
     }
 
     namespace Token
@@ -686,6 +687,11 @@ namespace WorldPackets
         class QueryVoidStorage;
         class VoidStorageTransfer;
         class SwapVoidItem;
+    }
+
+    namespace Warden
+    {
+        class WardenData;
     }
 
     namespace Who
@@ -1168,7 +1174,8 @@ class WorldSession
         void HandleSupportTicketSubmitBug(WorldPackets::Ticket::SupportTicketSubmitBug& packet);
         void HandleSupportTicketSubmitSuggestion(WorldPackets::Ticket::SupportTicketSubmitSuggestion& packet);
         void HandleSupportTicketSubmitComplaint(WorldPackets::Ticket::SupportTicketSubmitComplaint& packet);
-		void HandleBugReportOpcode(WorldPackets::Ticket::BugReport& bugReport);
+        void HandleBugReportOpcode(WorldPackets::Ticket::BugReport& bugReport);
+        void HandleComplaint(WorldPackets::Ticket::Complaint& packet);
 
         void HandleTogglePvP(WorldPackets::Misc::TogglePvP& packet);
         void HandleSetPvP(WorldPackets::Misc::SetPvP& packet);
@@ -1519,7 +1526,7 @@ class WorldSession
         void HandleBfQueueInviteResponse(WorldPackets::Battlefield::BFMgrQueueInviteResponse& bfMgrQueueInviteResponse);
         void HandleBfQueueExitRequest(WorldPackets::Battlefield::BFMgrQueueExitRequest& bfMgrQueueExitRequest);
 
-        void HandleWardenDataOpcode(WorldPacket& recvData);
+        
         void HandleWorldTeleportOpcode(WorldPackets::Misc::WorldTeleport& worldTeleport);
         void HandleMinimapPingOpcode(WorldPackets::Party::MinimapPingClient& packet);
         void HandleRandomRollOpcode(WorldPackets::Misc::RandomRollClient& packet);
@@ -1561,7 +1568,6 @@ class WorldSession
         void SendLfgTeleportError(uint8 err);
 
         void HandleSelfResOpcode(WorldPackets::Spells::SelfRes& packet);
-        void HandleComplainOpcode(WorldPacket& recvData);
         void HandleRequestPetInfo(WorldPackets::Pets::RequestPetInfo& packet);
 
         // Socket gem
@@ -1673,6 +1679,9 @@ class WorldSession
         void HandleBattlePetSetFlags(WorldPackets::BattlePet::BattlePetSetFlags& battlePetSetFlags);
         void HandleBattlePetSummon(WorldPackets::BattlePet::BattlePetSummon& battlePetSummon);
         void HandleCageBattlePet(WorldPackets::BattlePet::CageBattlePet& cageBattlePet);
+
+        // Warden
+        void HandleWardenData(WorldPackets::Warden::WardenData& packet);
 
         union ConnectToKey
         {
