@@ -3467,6 +3467,10 @@ void SpellMgr::LoadSpellInfoCorrections()
             case 102445: // Summon Master Li Fei
                 const_cast<SpellEffectInfo*>(spellInfo->GetEffect(EFFECT_0))->TargetA = SpellImplicitTargetInfo(TARGET_DEST_DB);
                 break;
+            // Demon Hunter Glide            
+			case 131347:
+				spellInfo->AuraInterruptFlags = AURA_INTERRUPT_FLAG_LANDING;
+                break;
             default:
                 break;
         }
