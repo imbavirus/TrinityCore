@@ -3469,7 +3469,8 @@ void SpellMgr::LoadSpellInfoCorrections()
                 break;
             // Demon Hunter Glide            
 			case 131347:
-				spellInfo->AuraInterruptFlags = AURA_INTERRUPT_FLAG_LANDING;
+                spellInfo->AuraInterruptFlags |= AURA_INTERRUPT_FLAG_LANDING | AURA_INTERRUPT_FLAG_NOT_ABOVEWATER ;
+
                 break;
             default:
                 break;

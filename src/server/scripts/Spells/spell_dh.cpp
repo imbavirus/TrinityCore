@@ -45,9 +45,13 @@ public:
 		SpellCastResult CheckCast()
 		{
 			if (Unit* caster = GetCaster())
-				if (!caster->IsFalling())
+            {
+                if (!caster->IsFalling())
 					return SPELL_FAILED_NOT_ON_GROUND;			
-			return SPELL_CAST_OK;
+                if (caster->IsInWater())
+                    return SPELL_FAILED_ONLY_NOT_SWIMMING;
+            }
+            return SPELL_CAST_OK;
 		}
 
 		void Register() override
